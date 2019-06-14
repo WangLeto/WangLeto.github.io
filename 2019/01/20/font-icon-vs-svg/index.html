@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false,"dimmer":false,"b2t":false,"scrollpercent":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近为了实现一个动画效果使用了 ::before 伪元素，里面需要显示一个 icon。经过一番查找，我发现有这么几种方案：  CSS sprite font-face svg   预备知识网络请求的速度网站加载时会请求所需的静态资源文件，这其中包括图片文件。网站加载的一个重要影响因素不一定是所请求资源的大小，反而是资源文件的数量。每个请求从建立到完成不仅仅是下载文件下载用时，事实上，对于小文件来说">
+<meta name="keywords" content="CSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小图标的最优解： svg">
+<meta property="og:url" content="http://letow.top/2019/01/20/font-icon-vs-svg/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="最近为了实现一个动画效果使用了 ::before 伪元素，里面需要显示一个 icon。经过一番查找，我发现有这么几种方案：  CSS sprite font-face svg   预备知识网络请求的速度网站加载时会请求所需的静态资源文件，这其中包括图片文件。网站加载的一个重要影响因素不一定是所请求资源的大小，反而是资源文件的数量。每个请求从建立到完成不仅仅是下载文件下载用时，事实上，对于小文件来说">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/snipaste%202019.01.20-11.05.jpg">
+<meta property="og:updated_time" content="2019-05-06T18:29:24.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="小图标的最优解： svg">
+<meta name="twitter:description" content="最近为了实现一个动画效果使用了 ::before 伪元素，里面需要显示一个 icon。经过一番查找，我发现有这么几种方案：  CSS sprite font-face svg   预备知识网络请求的速度网站加载时会请求所需的静态资源文件，这其中包括图片文件。网站加载的一个重要影响因素不一定是所请求资源的大小，反而是资源文件的数量。每个请求从建立到完成不仅仅是下载文件下载用时，事实上，对于小文件来说">
+<meta name="twitter:image" content="http://qiniu1.letow.top/snipaste%202019.01.20-11.05.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://letow.top/2019/01/20/font-icon-vs-svg/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>小图标的最优解： svg | Leto的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leto的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">所谓技术记录，与无病呻吟</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2019/01/20/font-icon-vs-svg/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="编程开发相关文章，心得感受">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">小图标的最优解： svg
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-20 10:22:08" itemprop="dateCreated datePublished" datetime="2019-01-20T10:22:08+08:00">2019-01-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-07 02:29:24" itemprop="dateModified" datetime="2019-05-07T02:29:24+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/01/20/font-icon-vs-svg/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/01/20/font-icon-vs-svg/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近为了实现一个动画效果使用了 <code>::before</code> 伪元素，里面需要显示一个 icon。经过一番查找，我发现有这么几种方案：</p>
+<ul>
+<li>CSS sprite</li>
+<li>font-face</li>
+<li>svg </li>
+</ul>
+<h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="网络请求的速度"><a href="#网络请求的速度" class="headerlink" title="网络请求的速度"></a>网络请求的速度</h3><p>网站加载时会请求所需的静态资源文件，这其中包括图片文件。网站加载的一个重要影响因素不一定是所请求资源的大小，反而是资源文件的数量。每个请求从建立到完成不仅仅是下载文件下载用时，事实上，对于小文件来说，真正的下载时间仅占请求的一小部分。</p>
+<p><img src="http://qiniu1.letow.top/snipaste%202019.01.20-11.05.jpg" alt=""></p>
+<a id="more"></a>
+<p>上图是一个七牛云外链图片的下载时间，可以看到，真正的下载时间只有 3.84ms，而整个请求的完成时间是 29.22ms。</p>
+<p>此外，浏览器的并发请求数量是有限制的。也就是说，虽然浏览器通过对多个静态资源同时开始请求减少因为连接用时等带来的时间浪费，但也仅仅是部分提升。如果网页需要的静态文件过多，并发请求的优势也会被抹平。</p>
+<h3 id="位图与矢量图"><a href="#位图与矢量图" class="headerlink" title="位图与矢量图"></a>位图与矢量图</h3><p>关于位图和矢量图，程序员应该都明白其差别。简单点说就是画板和几何画板的区别。位图缩放会失真，变成像素图；矢量图拥有“无限细节”，可以随意放缩。显然，拥有简单轮廓的图标适合使用矢量图来表示。</p>
+<h2 id="Png-CSS-sprite"><a href="#Png-CSS-sprite" class="headerlink" title="Png + CSS sprite"></a>Png + CSS sprite</h2><p>这是一种上古年间的实现方式，sprite 技术又被称为“精灵图”或“雪碧图”，是指将很多小图按照格子图一样的形式布局在一整张大图上，从而避免对大量小图片的请求，加快网页加载速度。在使用时，通过CSS进行图片定位，就可以取得所需的图标。</p>
+<p>但是使用位图作为图标的时代已经过去了，高分辨率屏幕的普及使得位图日暮西山，精灵图再见！</p>
+<h2 id="font-face-方式使用图标"><a href="#font-face-方式使用图标" class="headerlink" title="font-face 方式使用图标"></a>font-face 方式使用图标</h2><p><code>font-face</code> 因为 bootstrap 推荐的 font-awesome 而出名，是一种简单的使用位图作为图标的方案。而且通过将众多小图标整合到一套字体中去，font-face 也无需加载大量小文件，只需请求一次引用的字体文件即可。</p>
+<p>简要介绍使用方法：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">font-face</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">'example'</span>;</span><br><span class="line">  <span class="attribute">src</span>: <span class="built_in">url</span>(example.ttf);</span><br><span class="line">  <span class="attribute">unicode-range</span>: U+<span class="number">0025</span>-<span class="number">00</span>FF;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过以上的 font-face 声明，定义了一种名为“example”的字体，任何 font-family 为 “example”、字符的 unicode 值在 <code>U+0025-00FF</code> 范围内的文字，都会使用在 <code>example.ttf</code> 这个字体文件中的样式。而字体文件对这些 unicode 值的样式，就是我们所期望的图标了。</p>
+<p>font-face 的详细使用方法：<a href="https://www.zhangxinxu.com/wordpress/2017/03/css3-font-face-src-local/" target="_blank" rel="noopener">真正了解CSS3背景下的@font face规则</a>。如果想要自定义字体文件，<a href="http://www.iconfont.cn" target="_blank" rel="noopener">阿里巴巴矢量图标库</a>，<a href="icomoon.io">icomoon.io</a> 都可以满足你的需要。</p>
+<p>虽然广受欢迎，但是比起 svg，font-face 的解决方案还是显得不够优秀。两种方案的对比优缺点可以参考这里：<a href="https://css-tricks.com/icon-fonts-vs-svg/" target="_blank" rel="noopener">Inline SVG vs Icon Fonts [CAGEMATCH]</a>。可以看到，除了兼容性略逊一筹，svg 的效果全方面超过 font-face。</p>
+<h2 id="svg"><a href="#svg" class="headerlink" title="svg"></a>svg</h2><p>svg 的优点就不再赘述了。可能有人会有大量 svg 加载的疑虑，但是属于 svg 的精灵图技术也是早已存在的：<a href="https://www.zhangxinxu.com/wordpress/2014/07/introduce-svg-sprite-technology/" target="_blank" rel="noopener">未来必热：SVG Sprite技术介绍</a>。</p>
+<p>其代码大致如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">defs</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">g</span> <span class="attr">id</span>=<span class="string">"shape"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">rect</span> <span class="attr">x</span>=<span class="string">"0"</span> <span class="attr">y</span>=<span class="string">"0"</span> <span class="attr">width</span>=<span class="string">"50"</span> <span class="attr">height</span>=<span class="string">"50"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">circle</span> <span class="attr">cx</span>=<span class="string">"0"</span> <span class="attr">cy</span>=<span class="string">"0"</span> <span class="attr">r</span>=<span class="string">"50"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">g</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">defs</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">"#shape"</span> <span class="attr">x</span>=<span class="string">"50"</span> <span class="attr">y</span>=<span class="string">"50"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">"#shape"</span> <span class="attr">x</span>=<span class="string">"200"</span> <span class="attr">y</span>=<span class="string">"50"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在同一个 svg 文件中定义多个 <code>g</code> ，并通过 <code>use</code> 标签的 <code>xlink</code> 索引其 id 后重命名导出。使用如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span><span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">"target"</span>/&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span>文字<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>而且与位图 base64 的编码写入 css 相仿，svg 也可以直接内联到 <code>url()</code> 方法中，仅需仅需简单转换即可，相关文章：<a href="https://www.zhangxinxu.com/wordpress/2018/08/css-svg-background-image-base64-encode/" target="_blank" rel="noopener">学习了，CSS中内联SVG图片有比Base64更好的形式</a>。</p>
+<p>以上链接中提到的相关工具网站：<a href="https://www.zhangxinxu.com/sp/svgo/" target="_blank" rel="noopener">SVG在线压缩合并工具</a>。</p>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewbox="0 0 600 600" width="50%" style="margin: 0 25%">
+    <path fill="#EF914E" stroke="#000" stroke-width="3" d="M65 153l140-83C179 17 126-7 88 15s-49 85-23 138"/>
+    <path fill="#F2F2D8" stroke="#000" stroke-width=".5" d="M110 110l52-31c-9-20-29-28-43-20-15 8-18 31-8 51"/>
+    <path fill="#EF914E" stroke="#000" stroke-width="3" d="M554 194c36-47 39-108 5-139-32-29-89-17-124 29l118 110"/>
+    <path fill="#F2F2D8" stroke="#000" stroke-width=".5" d="M522 140c13-17 14-41 2-53-12-11-34-6-48 10l45 42"/>
+    <path fill="#ED924E" stroke="#000" stroke-width="3" d="M302 42c10 0 42 0 83 12 27 8 118 35 169 119 20 33 27 66 30 78 2 10 6 35 4 71-2 47-7 122-65 185-55 61-128 74-155 79-56 9-100 0-123-6-41-7-162-36-214-145-40-86-14-173-7-195 12-43 32-71 37-78 52-74 130-98 157-107 12-4 48-13 84-13z"/>
+    <circle cx="195" cy="196" r="22" stroke="#000"/>
+    <circle cx="421" cy="220" r="24" stroke="#000"/>
+    <path d="M430 149c27-2 53 1 66 10-6-14-34-24-66-22-36 1-65 17-65 34v2c11-11 36-21 65-24zm-231-9c-31-2-59 2-73 12 7-15 38-27 73-25 41 1 73 17 73 37v2c-11-13-39-23-73-26z"/>
+    <path fill="#994E27" d="M294 363c-16 25-52 44-94 44h-11c0 3 180 18 180 18s-46 0-75-62z"/>
+    <path fill="#F2B8B0" stroke="#000" stroke-width="2" d="M187 408c12 13 48 45 100 50 53 5 84-33 84-33s-27-7-31-9c-15-4-16-6-29-10-12-3-54-5-67-2-25 2-45 3-57 4z"/>
+    <ellipse cx="299" cy="329" fill="#ED924E" stroke="#000" stroke-width="2" rx="40" ry="38"/>
+    <path fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="2" d="M416 413c-8 5-23 11-41 11-32 0-63-23-79-57m-2 0c-16 27-106 68-166 14"/>
+    <path fill="none" stroke="#000" stroke-width="2" d="M231 480c20 17 80 23 103 5"/>
+    <path fill="#E8E8E8" stroke="#000" d="M492 306s-16 43-14 62c1 19 24 18 27 4 2-14-12-67-12-67"/>
+</svg>
+
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSS/" rel="tag"># CSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/14/git-checkout-commit/" rel="next" title="git 切换 commit 的正确姿势">
+                <i class="fa fa-chevron-left"></i> git 切换 commit 的正确姿势
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/30/python-http-server/" rel="prev" title="python3 快速启动 http 服务器">
+                python3 快速启动 http 服务器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://qiniu1.letow.top/avatar.jpg" alt="leto">
+            
+              <p class="site-author-name" itemprop="name">leto</p>
+              <div class="site-description motion-element" itemprop="description">编程开发相关文章，心得感受</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/WangLeto" title="GitHub &rarr; https://github.com/WangLeto" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 &rarr; https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#预备知识"><span class="nav-number">1.</span> <span class="nav-text">预备知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络请求的速度"><span class="nav-number">1.1.</span> <span class="nav-text">网络请求的速度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#位图与矢量图"><span class="nav-number">1.2.</span> <span class="nav-text">位图与矢量图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Png-CSS-sprite"><span class="nav-number">2.</span> <span class="nav-text">Png + CSS sprite</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#font-face-方式使用图标"><span class="nav-number">3.</span> <span class="nav-text">font-face 方式使用图标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#svg"><span class="nav-number">4.</span> <span class="nav-text">svg</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=64055980";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+    appKey: '0WPBlnil4NegnJaSrAVPSPqK',
+    placeholder: '说点什么',
+    avatar: 'hide',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

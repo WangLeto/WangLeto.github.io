@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":false,"dimmer":false,"b2t":false,"scrollpercent":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="如果遇到国外网站上的资源，大型文件如 Android studio 之类，即使使用了 vpn 也不见得能以较快速度下载，网络条件较差时尤甚。 如果按照以下方法下载，能一定程度上解决这个问题：  在海外服务器上下载所需文件 传输到七牛云对应的储存区域 使用多线程下载工具下载到本地">
+<meta name="keywords" content="其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="借助海外服务器+七牛云加速文件下载">
+<meta property="og:url" content="http://letow.top/2018/05/29/use-qiniu-speed-up-download/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="如果遇到国外网站上的资源，大型文件如 Android studio 之类，即使使用了 vpn 也不见得能以较快速度下载，网络条件较差时尤甚。 如果按照以下方法下载，能一定程度上解决这个问题：  在海外服务器上下载所需文件 传输到七牛云对应的储存区域 使用多线程下载工具下载到本地">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/snipaste%202018.05.29-16.41.jpg">
+<meta property="og:updated_time" content="2019-05-06T18:29:24.105Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="借助海外服务器+七牛云加速文件下载">
+<meta name="twitter:description" content="如果遇到国外网站上的资源，大型文件如 Android studio 之类，即使使用了 vpn 也不见得能以较快速度下载，网络条件较差时尤甚。 如果按照以下方法下载，能一定程度上解决这个问题：  在海外服务器上下载所需文件 传输到七牛云对应的储存区域 使用多线程下载工具下载到本地">
+<meta name="twitter:image" content="http://qiniu1.letow.top/snipaste%202018.05.29-16.41.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://letow.top/2018/05/29/use-qiniu-speed-up-download/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>借助海外服务器+七牛云加速文件下载 | Leto的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Leto的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">所谓技术记录，与无病呻吟</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2018/05/29/use-qiniu-speed-up-download/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="编程开发相关文章，心得感受">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">借助海外服务器+七牛云加速文件下载
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-29 16:42:57" itemprop="dateCreated datePublished" datetime="2018-05-29T16:42:57+08:00">2018-05-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-07 02:29:24" itemprop="dateModified" datetime="2019-05-07T02:29:24+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2018/05/29/use-qiniu-speed-up-download/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/29/use-qiniu-speed-up-download/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>如果遇到国外网站上的资源，大型文件如 Android studio 之类，即使使用了 vpn 也不见得能以较快速度下载，网络条件较差时尤甚。</p>
+<p>如果按照以下方法下载，能一定程度上解决这个问题：</p>
+<ul>
+<li>在海外服务器上下载所需文件</li>
+<li>传输到七牛云对应的储存区域</li>
+<li>使用多线程下载工具下载到本地</li>
+</ul>
+<a id="more"></a>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>确保你的海外服务器与七牛云的储存区域尽可能一致，比如我使用了 digital ocean 在新加坡的服务器，七牛云对应开启了一个东南亚区域的储存区域。其余可能的组合比如美国的服务器+七牛云北美位置的储存区域。</p>
+<p>如果找不到好的位置组合，可以查看你的服务器提供商是否允许更换服务器位置（通常这是被允许的）。</p>
+<h2 id="安装七牛云命令行客户端-qshell"><a href="#安装七牛云命令行客户端-qshell" class="headerlink" title="安装七牛云命令行客户端 qshell"></a>安装七牛云命令行客户端 <code>qshell</code></h2><p>文档见 <a href="https://developer.qiniu.com/kodo/tools/1302/qshell" target="_blank" rel="noopener">命令行工具(qshell)</a>，<code>qshell</code> 是七牛云为开发者提供的一个命令行客户端，方便用户在终端下仅文件的上传下载等管理。</p>
+<p>按照文档说明，下载 <code>qshell</code> 二进制执行文件到本地：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir qshell	# 创建 qshell 文件夹</span><br><span class="line">cd qshell		# 进入该文件夹</span><br><span class="line">wget http://devtools.qiniu.com/qshell-v2.1.8.zip?ref=developer.qiniu.com</span><br></pre></td></tr></table></figure>
+<p>linux 下使用 <code>pwd</code> （print working directory）命令打印当前目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@leto-revive qshell]# pwd</span><br><span class="line">/root/qshll</span><br></pre></td></tr></table></figure>
+<p>获知当前目录，将 <code>qshell</code> 目录添加到环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=$PATH:/root/qshell</span><br></pre></td></tr></table></figure>
+<p>这样你可以在任何位置执行 <code>qshell</code> 的命令。</p>
+<h3 id="关于执行权限"><a href="#关于执行权限" class="headerlink" title="关于执行权限"></a>关于执行权限</h3><blockquote>
+<p>如果在Linux或者Mac系统上遇到<code>Permission Denied</code>的错误，请使用命令<code>chmod +x qshell</code>来为文件添加可执行权限。这里的<code>qshell</code>是上面文件重命名之后的简写。</p>
+</blockquote>
+<h2 id="进行-qshell-的用户设置"><a href="#进行-qshell-的用户设置" class="headerlink" title="进行 qshell 的用户设置"></a>进行 <code>qshell</code> 的用户设置</h2><p>首先登录七牛云的个人中心，在密钥管理页面查看你的公私钥：<a href="https://portal.qiniu.com/user/key" target="_blank" rel="noopener">查看页面</a>。</p>
+<p>假设你的公钥（AK）是 <code>gongyao</code>，私钥（SK）是 <code>siyao</code>，在终端执行命令添加公私钥：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qshell account gongyao siyao</span><br></pre></td></tr></table></figure>
+<p>此时即完成了用户配置，可以尝试使用命令查看你的储存区域（bucket）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@leto-revive down]# qshell buckets</span><br><span class="line">2018/05/29 16:29:04 [I] Load account from /root/.qshell/account.json</span><br><span class="line">bucket1</span><br><span class="line">bucket2</span><br></pre></td></tr></table></figure>
+<h3 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h3><p>如果你使用命令 <code>qshell -h</code> 打印可用的命令，查看 bucket 的命令是 <code>qshell listbucket</code>。但是实际上这条命令并不能执行。</p>
+<h2 id="下载文件到服务器"><a href="#下载文件到服务器" class="headerlink" title="下载文件到服务器"></a>下载文件到服务器</h2><p><code>wget</code> 命令是 linux 上非常好用的下载命令。</p>
+<p>比如我想要下载这个页面 <a href="https://github.com/frankstar007/kNN/tree/master/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%AD%E6%96%87%E7%89%88%2B%E8%8B%B1%E6%96%87%E7%89%88%2B%E6%BA%90%E4%BB%A3%E7%A0%81%EF%BC%89" target="_blank" rel="noopener">kNN/机器学习实战（中文版+英文版+源代码</a> 中的 pdf 文件。首先右键复制目标文件的链接，然后在服务器上使用如下命令进行下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/frankstar007/kNN/blob/master/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%AD%E6%96%87%E7%89%88%2B%E8%8B%B1%E6%96%87%E7%89%88%2B%E6%BA%90%E4%BB%A3%E7%A0%81%EF%BC%89/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98.pdf</span><br></pre></td></tr></table></figure>
+<p>digital ocean 的下载速度非常之快，可以说瞬间完成。</p>
+<h2 id="上传文件到七牛云"><a href="#上传文件到七牛云" class="headerlink" title="上传文件到七牛云"></a>上传文件到七牛云</h2><p>文件下载完成后，即可上传到云端。</p>
+<p>使用 <code>qshell rput</code> 命令进行推送。参数列表为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Usage: qshell rput &lt;Bucket&gt; &lt;Key&gt; &lt;LocalFile&gt; [&lt;Overwrite&gt;] [&lt;MimeType&gt;] [&lt;UpHost&gt;] [&lt;FileType&gt;]</span><br></pre></td></tr></table></figure>
+<p>必须填写的是前三个参数：</p>
+<ul>
+<li>Bucket：选定的储存区域</li>
+<li>Key: 上传后文件的名称</li>
+<li>LocalFile: 需要上传的文件路径</li>
+</ul>
+<p>因此想要上传文件该文件，使用的命令为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qshell rput yourbucket name.pdf 机器学习实战.pdf</span><br></pre></td></tr></table></figure>
+<p>很快就完成了。</p>
+<h2 id="下载到本机"><a href="#下载到本机" class="headerlink" title="下载到本机"></a>下载到本机</h2><p>进行了这么多麻烦的操作，我们最终可以下载文件到本地了。</p>
+<p>登录七牛云的<a href="https://portal.qiniu.com/bucket/" target="_blank" rel="noopener">储存空间</a>，打开你上传的目标储存区域，在文件列表中找到刚刚上传的文件，复制文件外链。</p>
+<p>然后打开迅雷等多线程下载工具，新建下载任务，粘贴这个外链，即可进行下载。</p>
+<p><img src="http://qiniu1.letow.top/snipaste%202018.05.29-16.41.jpg" alt=""></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/其他/" rel="tag"># 其他</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/27/postman-post-types/" rel="next" title="postman 中的 form-data、x-www-form-urlencoded、raw、binary">
+                <i class="fa fa-chevron-left"></i> postman 中的 form-data、x-www-form-urlencoded、raw、binary
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/16/offline-install-andoid-sudio-sdk/" rel="prev" title="Android studio 离线安装 SDK 源码">
+                Android studio 离线安装 SDK 源码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://qiniu1.letow.top/avatar.jpg" alt="leto">
+            
+              <p class="site-author-name" itemprop="name">leto</p>
+              <div class="site-description motion-element" itemprop="description">编程开发相关文章，心得感受</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/WangLeto" title="GitHub &rarr; https://github.com/WangLeto" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 &rarr; https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>掘金</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装七牛云命令行客户端-qshell"><span class="nav-number">2.</span> <span class="nav-text">安装七牛云命令行客户端 qshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于执行权限"><span class="nav-number">2.1.</span> <span class="nav-text">关于执行权限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进行-qshell-的用户设置"><span class="nav-number">3.</span> <span class="nav-text">进行 qshell 的用户设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补充说明"><span class="nav-number">3.1.</span> <span class="nav-text">补充说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载文件到服务器"><span class="nav-number">4.</span> <span class="nav-text">下载文件到服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上传文件到七牛云"><span class="nav-number">5.</span> <span class="nav-text">上传文件到七牛云</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载到本机"><span class="nav-number">6.</span> <span class="nav-text">下载到本机</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=64055980";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+    appKey: '0WPBlnil4NegnJaSrAVPSPqK',
+    placeholder: '说点什么',
+    avatar: 'hide',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
