@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png">
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"letow.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false,"b2t":false,"scrollpercent":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文同时发布于掘金的个人专栏：[译] 为函数自定义属性的八种实现方法。  介绍：本文来自 Stack Overflow 上 Adding custom properties to a function - John Slegers 的答案。“给函数自定义属性”并不是常规做法，但是答案中给出的思路涉及广泛，很值得学习。  首先，你要认识到标准的函数属性（ arguments，name，caller">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给函数添加自定义属性的八种实现">
+<meta property="og:url" content="http://letow.top/2019/02/23/customize-function-property/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="本文同时发布于掘金的个人专栏：[译] 为函数自定义属性的八种实现方法。  介绍：本文来自 Stack Overflow 上 Adding custom properties to a function - John Slegers 的答案。“给函数自定义属性”并不是常规做法，但是答案中给出的思路涉及广泛，很值得学习。  首先，你要认识到标准的函数属性（ arguments，name，caller">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/1_zWhOGf_PgX0nRTLZLmFpGg_%E7%9C%8B%E5%9B%BE%E7%8E%8B%281%29.jpg">
+<meta property="og:updated_time" content="2021-08-29T11:26:14.838Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给函数添加自定义属性的八种实现">
+<meta name="twitter:description" content="本文同时发布于掘金的个人专栏：[译] 为函数自定义属性的八种实现方法。  介绍：本文来自 Stack Overflow 上 Adding custom properties to a function - John Slegers 的答案。“给函数自定义属性”并不是常规做法，但是答案中给出的思路涉及广泛，很值得学习。  首先，你要认识到标准的函数属性（ arguments，name，caller">
+<meta name="twitter:image" content="http://qiniu1.letow.top/1_zWhOGf_PgX0nRTLZLmFpGg_%E7%9C%8B%E5%9B%BE%E7%8E%8B%281%29.jpg">
+
+<link rel="canonical" href="http://letow.top/2019/02/23/customize-function-property/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>给函数添加自定义属性的八种实现 | Leto的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Leto的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2019/02/23/customize-function-property/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          给函数添加自定义属性的八种实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-23 16:09:55" itemprop="dateCreated datePublished" datetime="2019-02-23T16:09:55+08:00">2019-02-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-29 19:26:14" itemprop="dateModified" datetime="2021-08-29T19:26:14+08:00">2021-08-29</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/02/23/customize-function-property/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/02/23/customize-function-property/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文同时发布于掘金的个人专栏：<a href="https://juejin.im/post/5c70fd3f6fb9a04a06057dff" target="_blank" rel="noopener">[译] 为函数自定义属性的八种实现方法</a>。</p>
+<blockquote>
+<p>介绍：本文来自 Stack Overflow 上 <a href="https://stackoverflow.com/a/20734003/7526989" target="_blank" rel="noopener">Adding custom properties to a function - John Slegers 的答案</a>。“给函数自定义属性”并不是常规做法，但是答案中给出的思路涉及广泛，很值得学习。</p>
+</blockquote>
+<p>首先，你要认识到标准的函数属性（ arguments，name，caller 和 length ）都不能被覆盖。所以，打消自定义的这些属性名的想法吧。</p>
+<p>给函数添加自定义属性可以使用很多不同方法，这些都是跨浏览器兼容的。</p>
+<p><img src="http://qiniu1.letow.top/1_zWhOGf_PgX0nRTLZLmFpGg_%E7%9C%8B%E5%9B%BE%E7%8E%8B%281%29.jpg" alt=""></p>
+<a id="more"></a>
+<h2 id="方法一：执行函数时添加属性"><a href="#方法一：执行函数时添加属性" class="headerlink" title="方法一：执行函数时添加属性"></a>方法一：执行函数时添加属性</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> doSomething = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    doSomething.name = <span class="string">'Tom'</span>;</span><br><span class="line">    doSomething.name2 = <span class="string">'John'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : undefined</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<h3 id="方法一（替代语法）"><a href="#方法一（替代语法）" class="headerlink" title="方法一（替代语法）"></a>方法一（替代语法）</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doSomething</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    doSomething.name = <span class="string">'Tom'</span>;</span><br><span class="line">    doSomething.name2 = <span class="string">'John'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : doSomething</span><br><span class="line">doSomething.name2 : undefined</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : doSomething</span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<h3 id="方法一（第二种替代语法）"><a href="#方法一（第二种替代语法）" class="headerlink" title="方法一（第二种替代语法）"></a>方法一（第二种替代语法）</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> doSomething = <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    f.name = <span class="string">'Tom'</span>;</span><br><span class="line">    f.name2 = <span class="string">'John'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : f</span><br><span class="line">doSomething.name2 : undefined</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : f</span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>这种方法的问题在于，你需要至少先执行一次函数，才能完成属性赋值。对于多数函数来说，很显然我们不想这么做。所以考虑其他选择。</p>
+<h2 id="方法二：定义函数之后添加属性"><a href="#方法二：定义函数之后添加属性" class="headerlink" title="方法二：定义函数之后添加属性"></a>方法二：定义函数之后添加属性</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doSomething</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">doSomething.name = <span class="string">'Tom'</span>;</span><br><span class="line">doSomething.name2 = <span class="string">'John'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : doSomething</span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : doSomething</span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>现在，你不需要在取得属性值之前运行一次函数了。然而，不足之处是感觉这些属性脱离了函数。</p>
+<h2 id="方法三：使用匿名函数包装函数体（并立即执行）"><a href="#方法三：使用匿名函数包装函数体（并立即执行）" class="headerlink" title="方法三：使用匿名函数包装函数体（并立即执行）"></a>方法三：使用匿名函数包装函数体（并立即执行）</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> doSomething = (<span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> f = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">        f[i] = args[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;(&#123;</span><br><span class="line">    <span class="string">'name'</span>: <span class="string">'Tom'</span>,</span><br><span class="line">    <span class="string">'name2'</span>: <span class="string">'John'</span></span><br><span class="line">&#125;));</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>使用匿名函数包装你的函数，就可以将属性放入对象中，然后在匿名函数内遍历这些属性加以添加。用这种方式，属性与函数联系密切了。当你想要从已存在的对象中拷贝属性到函数中时，这种技术很有效。</p>
+<p>然而缺点是，你只能在定义函数时一次性添加这些属性。而且，这也违背了软件工程的 DRY 原则（<a href="http://www.ruanyifeng.com/blog/2013/01/abstraction_principles.html" target="_blank" rel="noopener">代码的抽象三原则</a>），尤其是你需要经常给各种函数添加属性的话。</p>
+<h2 id="方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性"><a href="#方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性" class="headerlink" title="方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性"></a>方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> doSomething = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">doSomething.extend = <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">        <span class="keyword">this</span>[i] = args[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">doSomething.extend(&#123;</span><br><span class="line">    <span class="string">'name'</span>: <span class="string">'Tom'</span>,</span><br><span class="line">    <span class="string">'name2'</span>: <span class="string">'John'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>可以一次性处理多个属性，也可以随时从别处添加了。</p>
+<p>然而，代码同样违反了 DRY 原则，如果你经常这么做的话。</p>
+<h2 id="方法五：创建一个通用的“extend”函数"><a href="#方法五：创建一个通用的“extend”函数" class="headerlink" title="方法五：创建一个通用的“extend”函数"></a>方法五：创建一个通用的“extend”函数</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注：原文有错误，已改正</span></span><br><span class="line"><span class="keyword">var</span> extend = <span class="function"><span class="keyword">function</span>(<span class="params">obj, args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(args) || (args !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> args === <span class="string">'object'</span>)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">            obj[i] = args[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> doSomething = extend(</span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">'name'</span>: <span class="string">'Tom'</span>,</span><br><span class="line">        <span class="string">'name2'</span>: <span class="string">'John'</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>这是一个通用的继承方法，更符合 DRY 原则，允许你任性添加属性。</p>
+<h2 id="方法六：创建一个-extendableFunction-对象，用它为函数添加扩展函数"><a href="#方法六：创建一个-extendableFunction-对象，用它为函数添加扩展函数" class="headerlink" title="方法六：创建一个 extendableFunction 对象，用它为函数添加扩展函数"></a>方法六：创建一个 extendableFunction 对象，用它为函数添加扩展函数</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> extendableFunction = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> extend = <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(args) || (args !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> args === <span class="string">'object'</span>)) &#123;</span><br><span class="line">            <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">                <span class="keyword">this</span>[i] = args[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">var</span> ef = <span class="function"><span class="keyword">function</span>(<span class="params">v, obj</span>) </span>&#123;</span><br><span class="line">        v.extend = extend;</span><br><span class="line">        <span class="keyword">return</span> v.extend(obj);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    ef.create = <span class="function"><span class="keyword">function</span>(<span class="params">v, args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">this</span>(v, args);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> ef;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> doSomething = extendableFunction.create(</span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">'name'</span>: <span class="string">'Tom'</span>,</span><br><span class="line">        <span class="string">'name2'</span>: <span class="string">'John'</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>不再需要一个通用的“extend”函数了，这种方法生产出来的函数自带一个“extend”函数方法。</p>
+<blockquote>
+<p>注：extendableFunction 和上面的 extend 都是高阶函数（high order function），但又都不是纯函数（pure function）。相关知识可以了解一下<a href="https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/" target="_blank" rel="noopener">函数式编程</a>，有能力的话最好阅读英文原版 <a href="https://mostly-adequate.gitbooks.io/mostly-adequate-guide/content/" target="_blank" rel="noopener">mostly-adequate-guide</a>。</p>
+</blockquote>
+<h2 id="方法七：向-Function-原形挂载“extend”函数"><a href="#方法七：向-Function-原形挂载“extend”函数" class="headerlink" title="方法七：向 Function 原形挂载“extend”函数"></a>方法七：向 Function 原形挂载“extend”函数</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span>.prototype.extend = <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(args) || (args !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> args === <span class="string">'object'</span>)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">            <span class="keyword">this</span>[i] = args[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> doSomething = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">&#125;.extend(&#123;</span><br><span class="line">    name : <span class="string">'Tom'</span>,</span><br><span class="line">    name2 : <span class="string">'John'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : </span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>这种做法的一个巨大优势是，向函数添加新的属性变得非常简单，这种做法也符合 DRY 原则，并且很面向对象。另外，向 Function 原形链挂载方法也节省内存。</p>
+<p>然而，这种做法的缺点是并不具有充分的前瞻性。一旦将来浏览器给 Funcion 的原形上挂载了原生的“extend”方法，你的代码就会出问题。</p>
+<h2 id="方法八：函数递归一次然后返回自身"><a href="#方法八：函数递归一次然后返回自身" class="headerlink" title="方法八：函数递归一次然后返回自身"></a>方法八：函数递归一次然后返回自身</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> doSomething = (<span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">arg1</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(f.name2 === <span class="literal">undefined</span>) &#123;</span><br><span class="line">        f.name = <span class="string">'Tom'</span>;</span><br><span class="line">        f.name2 = <span class="string">'John'</span>;</span><br><span class="line">        <span class="comment">// 注：此处原答案疑似错误，已改正</span></span><br><span class="line">        f.extend = <span class="function"><span class="keyword">function</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(args) || (args !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> args === <span class="string">'object'</span>)) &#123;</span><br><span class="line">                <span class="keyword">for</span> (i <span class="keyword">in</span> args) &#123;</span><br><span class="line">                    <span class="keyword">this</span>[i] = args[i];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">return</span> f;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Beep'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething() : '</span> + doSomething());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name : '</span> + doSomething.name);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'doSomething.name2 : '</span> + doSomething.name2);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">doSomething.name : f</span><br><span class="line">doSomething.name2 : John</span><br><span class="line">doSomething() : Beep</span><br><span class="line">doSomething.name : f</span><br><span class="line">doSomething.name2 : John</span><br></pre></td></tr></table></figure>
+<p>运行该函数一次，检查它所需要的属性。如果没有，设置该属性并返回函数本体；如果设置过了，直接执行该函数。</p>
+<p>如果你将“extend”方法设置为属性之一，之后还可以为该函数新增别的属性。</p>
+<hr>
+<h2 id="向对象中添加自定义属性"><a href="#向对象中添加自定义属性" class="headerlink" title="向对象中添加自定义属性"></a>向对象中添加自定义属性</h2><p>我虽然给出了这么多方法，还是建议你不要给函数设置属性；设置对象的属性好多了！</p>
+<p>我个人喜欢使用下面这种语法来实现单例类：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> keyValueStore = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">'data'</span> : &#123;&#125;,</span><br><span class="line">        <span class="string">'get'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">return</span> keyValueStore.data[key]; &#125;,</span><br><span class="line">        <span class="string">'set'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key, value</span>) </span>&#123; keyValueStore.data[key] = value; &#125;,</span><br><span class="line">        <span class="string">'delete'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">delete</span> keyValueStore.data[key]; &#125;,</span><br><span class="line">        <span class="string">'getLength'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> l = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (p <span class="keyword">in</span> keyValueStore.data) l++;</span><br><span class="line">            <span class="keyword">return</span> l;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>这种写法的好处是兼容公共和私有变量。例如，这样你就可以让“data”变为 private 的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> keyValueStore = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> data = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">'get'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">return</span> data[key]; &#125;,</span><br><span class="line">        <span class="string">'set'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key, value</span>) </span>&#123; data[key] = value; &#125;,</span><br><span class="line">        <span class="string">'delete'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">delete</span> data[key]; &#125;,</span><br><span class="line">        <span class="string">'getLength'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> l = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (p <span class="keyword">in</span> data) l++;</span><br><span class="line">            <span class="keyword">return</span> l;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>可是你想要多个 datastore 实例？没问题！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> keyValueStore = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">-1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> (<span class="function"><span class="keyword">function</span> <span class="title">kvs</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">'data'</span>: &#123;&#125;,</span><br><span class="line">            <span class="string">'create'</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> kvs(); &#125;,</span><br><span class="line">            <span class="string">'get'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">return</span> <span class="keyword">this</span>.data[key]; &#125;,</span><br><span class="line">            <span class="string">'set'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key, value</span>) </span>&#123; <span class="keyword">this</span>.data[key] = value; &#125;,</span><br><span class="line">            <span class="string">'delete'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">delete</span> <span class="keyword">this</span>.data[key]; &#125;,</span><br><span class="line">            <span class="string">'getLength'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">var</span> l = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (p <span class="keyword">in</span> <span class="keyword">this</span>.data) l++;</span><br><span class="line">                <span class="keyword">return</span> l;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)();</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注：使用时可以按照以下语法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">let</span> s1 = keyValueStore;</span><br><span class="line">&gt;<span class="keyword">let</span> s2 = s1.create();</span><br><span class="line">&gt;s1.set(<span class="string">'a'</span>, <span class="number">1</span>);</span><br><span class="line">&gt;s1.set(<span class="string">'b'</span>, <span class="number">2</span>);</span><br><span class="line">&gt;s2.set(<span class="string">'c'</span>, <span class="number">3</span>);</span><br><span class="line">&gt;s1.count() === s2.count(); <span class="comment">// 输出 true；count() 返回 kvs 的个数</span></span><br><span class="line">&gt;s1.getLength(); <span class="comment">// 输出 2；getLength() 返回每个 kvs 自身的数据条数</span></span><br><span class="line">&gt;s2.getLength(); <span class="comment">// 输出 1</span></span><br><span class="line">&gt;s1.get(<span class="string">'c'</span>); <span class="comment">// 输出 undefined；因为“c”是 s2 所包含的</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>最后，你可以隔离实例和单例类的属性，并在原形上给实例定义 public 方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> keyValueStore = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>; <span class="comment">// Singleton private properties</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> kvs = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        count++; <span class="comment">// Instance private properties</span></span><br><span class="line">        <span class="keyword">this</span>.data = &#123;&#125;;  <span class="comment">// Instance public properties</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    kvs.prototype = &#123; <span class="comment">// Instance public properties</span></span><br><span class="line">        <span class="string">'get'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">return</span> <span class="keyword">this</span>.data[key]; &#125;,</span><br><span class="line">        <span class="string">'set'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key, value</span>) </span>&#123; <span class="keyword">this</span>.data[key] = value; &#125;,</span><br><span class="line">        <span class="string">'delete'</span> : <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123; <span class="keyword">delete</span> <span class="keyword">this</span>.data[key]; &#125;,</span><br><span class="line">        <span class="string">'getLength'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> l = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (p <span class="keyword">in</span> <span class="keyword">this</span>.data) l++;</span><br><span class="line">            <span class="keyword">return</span> l;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>  &#123; <span class="comment">// Singleton public properties</span></span><br><span class="line">        <span class="string">'create'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> kvs(); &#125;,</span><br><span class="line">        <span class="string">'count'</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> count; &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>使用上面的方法，好处有：</p>
+<ul>
+<li>为对象声明多个实例</li>
+<li>保有私有变量</li>
+<li>定义类的变量</li>
+</ul>
+<p>使用方法如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kvs = keyValueStore.create();</span><br><span class="line">kvs.set(<span class="string">'Tom'</span>, <span class="string">"Baker"</span>);</span><br><span class="line">kvs.set(<span class="string">'Daisy'</span>, <span class="string">"Hostess"</span>);</span><br><span class="line"><span class="keyword">var</span> profession_of_daisy = kvs.get(<span class="string">'Daisy'</span>);  <span class="comment">// 输出 Hostess</span></span><br><span class="line">kvs.delete(<span class="string">'Daisy'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(keyValueStore.count());  <span class="comment">// 输出 1</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注：keyValueStore 是单例，create 与 count 是其自身方法，create 用于新建数据仓库 kvs，count 为生产的 kvs 计数；kvs 仅有 get、set、delete、getLength 方法，无法像前一种实现一样直接调用 create 和 count 方法了。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/13/js-wrap-object/" rel="prev" title="JavaScript 包装对象">
+      <i class="fa fa-chevron-left"></i> JavaScript 包装对象
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/13/several-putty-at-once/" rel="next" title="一次性打开多个 putty 连接">
+      一次性打开多个 putty 连接 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一：执行函数时添加属性"><span class="nav-number">1.</span> <span class="nav-text">方法一：执行函数时添加属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一（替代语法）"><span class="nav-number">1.1.</span> <span class="nav-text">方法一（替代语法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一（第二种替代语法）"><span class="nav-number">1.2.</span> <span class="nav-text">方法一（第二种替代语法）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二：定义函数之后添加属性"><span class="nav-number">2.</span> <span class="nav-text">方法二：定义函数之后添加属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法三：使用匿名函数包装函数体（并立即执行）"><span class="nav-number">3.</span> <span class="nav-text">方法三：使用匿名函数包装函数体（并立即执行）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性"><span class="nav-number">4.</span> <span class="nav-text">方法四：为函数添加一个“extend”方法，用于从对象中逐个添加属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法五：创建一个通用的“extend”函数"><span class="nav-number">5.</span> <span class="nav-text">方法五：创建一个通用的“extend”函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法六：创建一个-extendableFunction-对象，用它为函数添加扩展函数"><span class="nav-number">6.</span> <span class="nav-text">方法六：创建一个 extendableFunction 对象，用它为函数添加扩展函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法七：向-Function-原形挂载“extend”函数"><span class="nav-number">7.</span> <span class="nav-text">方法七：向 Function 原形挂载“extend”函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法八：函数递归一次然后返回自身"><span class="nav-number">8.</span> <span class="nav-text">方法八：函数递归一次然后返回自身</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向对象中添加自定义属性"><span class="nav-number">9.</span> <span class="nav-text">向对象中添加自定义属性</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leto" src="http://qiniu1.letow.top/avatar.jpg">
+  <p class="site-author-name" itemprop="name">leto</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WangLeto" title="GitHub → https://github.com/WangLeto" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 → https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="juejin fa-fw"></i>掘金</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+      appKey     : '0WPBlnil4NegnJaSrAVPSPqK',
+      placeholder: "说点什么",
+      avatar     : 'hide',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

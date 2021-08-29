@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png">
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"letow.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false,"b2t":false,"scrollpercent":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="可以点击查看 在线演示，以及 完整代码。 本文也发布在了掘金上，链接：https://juejin.im/post/5c52b2b26fb9a049fb44168e 。 CSS transform首先，需要了解 CSS3 的 transform ，用 transform 进行元素的变换，这是实现的关键。 transform 最常用的形式像这样： 1234567// 放大 2 倍transform:">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一步步实现网页图片的手势拖拽与缩放">
+<meta property="og:url" content="http://letow.top/2019/02/01/js-touch-drag-and-scroll/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="可以点击查看 在线演示，以及 完整代码。 本文也发布在了掘金上，链接：https://juejin.im/post/5c52b2b26fb9a049fb44168e 。 CSS transform首先，需要了解 CSS3 的 transform ，用 transform 进行元素的变换，这是实现的关键。 transform 最常用的形式像这样： 1234567// 放大 2 倍transform:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/snipaste%202019.01.30-18.03.jpg">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/1/31/168a309fac43cb8c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="http://qiniu1.letow.top/snipaste%202019.01.31-12.19.jpg">
+<meta property="og:image" content="http://qiniu1.letow.top/snipaste%202019.01.31-16.20.jpg">
+<meta property="og:updated_time" content="2021-08-29T11:26:14.842Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一步步实现网页图片的手势拖拽与缩放">
+<meta name="twitter:description" content="可以点击查看 在线演示，以及 完整代码。 本文也发布在了掘金上，链接：https://juejin.im/post/5c52b2b26fb9a049fb44168e 。 CSS transform首先，需要了解 CSS3 的 transform ，用 transform 进行元素的变换，这是实现的关键。 transform 最常用的形式像这样： 1234567// 放大 2 倍transform:">
+<meta name="twitter:image" content="http://qiniu1.letow.top/snipaste%202019.01.30-18.03.jpg">
+
+<link rel="canonical" href="http://letow.top/2019/02/01/js-touch-drag-and-scroll/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一步步实现网页图片的手势拖拽与缩放 | Leto的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Leto的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2019/02/01/js-touch-drag-and-scroll/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一步步实现网页图片的手势拖拽与缩放
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-01 08:43:51" itemprop="dateCreated datePublished" datetime="2019-02-01T08:43:51+08:00">2019-02-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-29 19:26:14" itemprop="dateModified" datetime="2021-08-29T19:26:14+08:00">2021-08-29</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/02/01/js-touch-drag-and-scroll/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/02/01/js-touch-drag-and-scroll/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>可以点击查看 <a href="https://link.juejin.im?target=http%3A%2F%2Fblog.letow.top%2Fhtml-drag-scale-demo%2F" target="_blank" rel="noopener">在线演示</a>，以及 <a href="https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2FWangLeto%2Fhtml-drag-scale-demo%2Fblob%2Fmaster%2Findex.html" target="_blank" rel="noopener">完整代码</a>。</p>
+<p>本文也发布在了掘金上，链接：<a href="https://juejin.im/post/5c52b2b26fb9a049fb44168e" target="_blank" rel="noopener">https://juejin.im/post/5c52b2b26fb9a049fb44168e</a> 。</p>
+<h2 id="CSS-transform"><a href="#CSS-transform" class="headerlink" title="CSS transform"></a>CSS transform</h2><p>首先，需要了解 CSS3 的 <code>transform</code> ，用 <code>transform</code> 进行元素的变换，这是实现的关键。</p>
+<p><code>transform</code> 最常用的形式像这样：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 放大 2 倍</span><br><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">scale</span>(2);</span><br><span class="line"></span><br><span class="line">// 向左平移 100px</span><br><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">translate</span>(100<span class="selector-tag">px</span>);</span><br><span class="line"></span><br><span class="line">// rotate，skew，perspective 等其他变换</span><br></pre></td></tr></table></figure>
+<p>其实，上面的写法可以算作 CSS 提供的语法糖。了解计算机图形学的同学可能知道，计算机完成图像变换实际上使用的实现是矩阵。</p>
+<a id="more"></a>
+<p>如果使用以下 JavaScript 代码更改并查询一个 div 元素的 CSS transform 属性：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'div'</span>).style.transform = <span class="string">'scale(1)'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.getComputedStyle(<span class="built_in">document</span>.querySelector(<span class="string">'div'</span>), <span class="literal">null</span>).getPropertyValue(<span class="string">'transform'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出 "matrix(1, 0, 0, 1, 0, 0)"</span></span><br></pre></td></tr></table></figure>
+<p>可以看到此时 transform 的值并不是“scale(1)”，而是一个矩阵表示。此处 matrix 中的 6 个参数，对应了 2D 仿射变换矩阵中起作用的 6 个值（完整的是 3*3 矩阵，但是有 3 个参数是固定的）——不过这跟本文的实现没有太大关系。为了简单起见，只需知道在 matrix 用到的参数即可。</p>
+<p><img src="http://qiniu1.letow.top/snipaste%202019.01.30-18.03.jpg" alt="简单的matrix参数解释"></p>
+<p><strong>但这绝对不是 matrix 完整的正确用法</strong></p>
+<p>如果想要多了解一些关于变换矩阵的知识，请搜索“仿射变换”。</p>
+<p>知乎上有一个很好的入门回答：<a href="https://link.juejin.im?target=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F20666664%2Fanswer%2F15740056" target="_blank" rel="noopener">如何通俗地讲解「仿射变换」这个概念？ - 马同学的回答</a>。</p>
+<p>如果不愿意写矩阵形式，也可以将其等价地写成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">translate</span>(200<span class="selector-tag">px</span>, 100<span class="selector-tag">px</span>) <span class="selector-tag">scale</span>(3);</span><br></pre></td></tr></table></figure>
+<p>注意，<strong>书写顺序决定了变换顺序，不可以将 scale 放置在 translate 之前</strong>：<a href="https://link.juejin.im?target=https%3A%2F%2Fstackoverflow.com%2Fa%2F27475543%2F7526989" target="_blank" rel="noopener">Is a css transform matrix equivalent to a transform scale, skew, translate</a>。</p>
+<h2 id="Touch-事件"><a href="#Touch-事件" class="headerlink" title="Touch 事件"></a>Touch 事件</h2><p>在进行实现之前，需要先了解一点触摸事件的处理。详见 <a href="https://link.juejin.im?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FTouch_events" target="_blank" rel="noopener">触摸事件</a>。</p>
+<p>这里简单介绍一下相关的事件：</p>
+<p><code>touchstart</code>：触摸事件开始，表示一个触摸点开始接触。可以通过传入对象获取 <code>touches</code>，即一 个 <a href="https://link.juejin.im?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FTouchList" target="_blank" rel="noopener"><code>TouchList</code></a> 对象，里面含有当前所有的接触点，即 <a href="https://link.juejin.im?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FTouch" target="_blank" rel="noopener">touch</a> 对象。下面 2 个事件传入参数相同。</p>
+<p><code>touchmove</code>：触摸点移动。</p>
+<p><code>touchend</code>：触摸事件结束，表示一个触摸点离开。</p>
+<p><code>TouchList</code>：是一种“类数组”对象，也就是和函数中拿到的 <code>arguments</code> 相似，不是数组，但是含有 <code>length</code> 属性，以及 <code>0</code>、<code>1</code> 这样的 key 值 ，可以通过 <code>Array.prototype.slice</code> 转为数组。也可以使用 <code>touches[&#39;0&#39;]</code> 这样的语法直接从 touches 中取出触摸点对象。</p>
+<h3 id="需要了解"><a href="#需要了解" class="headerlink" title="需要了解"></a>需要了解</h3><ul>
+<li><p>触摸事件传入的参数是组合对象，因此如果使用了 React 框架，最好不要向异步方法，如 setTimeout、Promise、async / await 区域中传递该参数。可以先使用变量获取需要使用的值，再进行传递。如果一定要传入，可以使用 <code>e.persist()</code> 将对象持久化。</p>
+</li>
+<li><p>区别于点击事件，无法从触摸事件中直接获得 offsetX offsetY。因此需要自己计算这两个值。</p>
+<p><a href="https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fw3c%2Ftouch-events%2Fissues%2F62%23issuecomment-204888619" target="_blank" rel="noopener">Why don’t Touch objects have offsetX and offsetY properties like MouseEvent does? –The elephant in the room is Apple.</a></p>
+</li>
+</ul>
+<h2 id="拖拽的实现"><a href="#拖拽的实现" class="headerlink" title="拖拽的实现"></a>拖拽的实现</h2><p>网上找 DOM 元素拖拽，通常的做法是使用相对定位与 top、left 属性。但是结合缩放事件，本文将使用 transform 进行实现。</p>
+<p>不过无论具体实现方式如何，移动元素的思想都是一致的：先计算两次 move 事件中的触摸位移，然后将这段位移应用到目标上。</p>
+<p>HTML 部分：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--一些方便实现的声明--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>Touch<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">    html, body &#123;</span></span><br><span class="line"><span class="undefined">      margin: 0;</span></span><br><span class="line"><span class="undefined">      padding: 0;</span></span><br><span class="line"><span class="undefined">      height: 100%;</span></span><br><span class="line"><span class="undefined">      width: 100%;</span></span><br><span class="line"><span class="undefined">      // 禁用页面拖动刷新</span></span><br><span class="line"><span class="undefined">      overscroll-behavior: contain;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-class">.board</span> &#123;</span></span><br><span class="line"><span class="undefined">      width: 100%;</span></span><br><span class="line"><span class="undefined">      height: 100%;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-class">.board</span> <span class="selector-tag">img</span> &#123;</span></span><br><span class="line"><span class="undefined">      width: 260px;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"board"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--盗了少数派的图--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"https://cdn.sspai.com/article/86c69914-4545-bc1c-1310-2975d4fe8d6b.jpg?imageMogr2/quality/95/thumbnail/!700x233r/gravity/Center/crop/700x233"</span> <span class="attr">alt</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>JavaScript 部分：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> img = <span class="built_in">document</span>.querySelector(<span class="string">'img'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询 DOM 对象的 CSS 值</span></span><br><span class="line"><span class="keyword">const</span> getStyle = <span class="function">(<span class="params">target, style</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> styles = <span class="built_in">window</span>.getComputedStyle(target, <span class="literal">null</span>);</span><br><span class="line">  <span class="keyword">return</span> styles.getPropertyValue(style);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取并解析元素当前的位移量</span></span><br><span class="line"><span class="keyword">const</span> getTranslate = <span class="function">(<span class="params">target</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> matrix = getStyle(target, <span class="string">'transform'</span>);</span><br><span class="line">  <span class="keyword">let</span> nums = matrix.substring(<span class="number">7</span>, matrix.length - <span class="number">1</span>).split(<span class="string">', '</span>);</span><br><span class="line">  <span class="keyword">let</span> left = <span class="built_in">parseInt</span>(nums[<span class="number">4</span>]) || <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">let</span> top = <span class="built_in">parseInt</span>(nums[<span class="number">5</span>]) || <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">left</span>: left, <span class="attr">top</span>: top &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 记录前一次触摸点的位置</span></span><br><span class="line"><span class="keyword">let</span> preTouchPosition = &#123;&#125;;</span><br><span class="line"><span class="keyword">const</span> recordPreTouchPosition = <span class="function">(<span class="params">touch</span>) =&gt;</span> &#123;</span><br><span class="line">  preTouchPosition = &#123;</span><br><span class="line">    x: touch.clientX,</span><br><span class="line">    y: touch.clientY</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 应用样式变换</span></span><br><span class="line"><span class="keyword">const</span> setStyle = <span class="function">(<span class="params">key, value</span>) =&gt;</span> &#123; img.style[key] = value; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加触摸移动的响应事件</span></span><br><span class="line">img.addEventListener(<span class="string">'touchmove'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touch = e.touches[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">let</span> translated = getTranslate(touch.target);</span><br><span class="line">  <span class="comment">// 移动后的位置 = 当前位置 + （此刻触摸点位置 - 上一次触摸点位置）</span></span><br><span class="line">  <span class="keyword">let</span> translateX = translated.left + (touch.clientX - preTouchPosition.x);</span><br><span class="line">  <span class="keyword">let</span> translateY = translated.top + (touch.clientY - preTouchPosition.y);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> matrix = <span class="string">`matrix(1, 0, 0, 1, <span class="subst">$&#123;translateX&#125;</span>, <span class="subst">$&#123;translateY&#125;</span>)`</span>;</span><br><span class="line">  setStyle(<span class="string">'transform'</span>, matrix);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 完成一次移动后，要及时更新前一次触摸点的位置</span></span><br><span class="line">  recordPreTouchPosition(touch);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 开始触摸时记录触摸点的位置</span></span><br><span class="line">img.addEventListener(<span class="string">'touchstart'</span>, e =&gt; &#123; recordPreTouchPosition(e.touches[<span class="string">'0'</span>]); &#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="缩放的实现"><a href="#缩放的实现" class="headerlink" title="缩放的实现"></a>缩放的实现</h2><h3 id="初步实现"><a href="#初步实现" class="headerlink" title="初步实现"></a>初步实现</h3><p>要进行缩放，就要知道缩放的倍数。进行缩放是双指的动作，有 2 个触摸点，而将触摸点之间的距离变化对应到缩放倍率的变化，就可以实现双指缩放的效果。要得知缩放的变化，思路跟移动一致，也是要记录上次的触摸点距离。然后就可以计算现在的缩放倍率。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> scaleRatio = <span class="number">1</span>;</span><br><span class="line"><span class="comment">// 从变量名就知道它的用途与用法</span></span><br><span class="line"><span class="keyword">let</span> preTouchesClientx1y1x2y2 = [];</span><br><span class="line">img.addEventListener(<span class="string">'touchmove'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touches = e.touches;</span><br><span class="line">  <span class="keyword">if</span> (touches.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 即便同时落下 10 个手指，我们只取前 2 个就好</span></span><br><span class="line">    <span class="keyword">let</span> one = touches[<span class="string">'0'</span>];</span><br><span class="line">    <span class="keyword">let</span> two = touches[<span class="string">'1'</span>];</span><br><span class="line">    <span class="keyword">const</span> distance = <span class="function">(<span class="params">x1, y1, x2, y2</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> a = x1 - x2;</span><br><span class="line">      <span class="keyword">let</span> b = y1 - y2;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Math</span>.sqrt(a * a + b * b);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 新的缩放倍率 = （当前指间距离 ÷ 之前指间距离）× 之前缩放倍率</span></span><br><span class="line">    <span class="comment">// 没有在 touchstart 中记录最初的双指位置，计算会得到 NaN，对结果直接取 1</span></span><br><span class="line">    scaleRatio = distance(one.clientX, one.clientY, two.clientX, two.clientY) / distance(...preTouchesClientx1y1x2y2) * scaleRatio || <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> matrix = <span class="string">`matrix(<span class="subst">$&#123;scaleRatio&#125;</span>, 0, 0, <span class="subst">$&#123;scaleRatio&#125;</span>, <span class="subst">$&#123;translateX&#125;</span>, <span class="subst">$&#123;translateY&#125;</span>)`</span>;</span><br><span class="line">    setStyle(<span class="string">'transform'</span>, matrix);</span><br><span class="line">    <span class="comment">// 及时更新双指位置信息</span></span><br><span class="line">    preTouchesClientx1y1x2y2 = [one.clientX, one.clientY, two.clientX, two.clientY];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line">img.addEventListener(<span class="string">'touchstart'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touches = e.touches;</span><br><span class="line">  <span class="comment">// 双指同时落下也是有先后顺序的，当发现多指触摸时进行记录</span></span><br><span class="line">  <span class="keyword">if</span> (touches.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> one = touches[<span class="string">'0'</span>];</span><br><span class="line">    <span class="keyword">let</span> two = touches[<span class="string">'1'</span>];</span><br><span class="line">    preTouchesClientx1y1x2y2 = [one.clientX, one.clientY, two.clientX, two.clientY];</span><br><span class="line">  &#125;</span><br><span class="line">  recordPreTouchPosition(touches[<span class="string">'0'</span>]);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>现在已经实现了基本的缩放功能，但是好像哪里不太对……为什么感觉缩放效果不是从手指中传出的呢？似乎不管在哪里操作，都是从图片中心开始的。</p>
+<h3 id="transform-origin"><a href="#transform-origin" class="headerlink" title="transform-origin"></a>transform-origin</h3><p>简单介绍一个 CSS 属性：<code>transform-origin</code>，详细介绍见 <a href="https://link.juejin.im?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FCSS%2Ftransform-origin" target="_blank" rel="noopener">MDN</a>。</p>
+<p>此属性规定元素基点，也就是是应用变换的原点。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 元素基点设置为 (50px, 50px)，是元素上的相对坐标</span><br><span class="line"><span class="selector-tag">transform-origin</span>: 50<span class="selector-tag">px</span> 50<span class="selector-tag">px</span>;</span><br></pre></td></tr></table></figure>
+<p>当图形变换只有位移时，transform-origin 不会有什么影响。但是对于旋转和缩放属性来说，元素基点是重要的属性。</p>
+<p>而默认的 transform-origin 值是 <code>50% 50%</code>，也就是元素正中心。这也就是为什么每次进行缩放操作，都感觉缩放从图片中心点传来。</p>
+<p>如果想要感受缩放效果从手指开始，就要将 transform-origin 设置在双指中间的位置；或者，通过位移的计算，模拟出 origin 的变化。本文采用前一种更直观的思路。</p>
+<h3 id="获取触摸的-offset"><a href="#获取触摸的-offset" class="headerlink" title="获取触摸的 offset"></a>获取触摸的 offset</h3><p>实际上，不管元素被变换成了什么形状，设置 origin 时都是采用相对元素变换前的偏移量。之前提到过 touch 事件中并没有触摸点相对于元素的 offset 值，因此需要自己来计算。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算相对缩放前的偏移量，rect 为当前变换后元素的四周的位置</span></span><br><span class="line"><span class="keyword">const</span> relativeCoordinate = <span class="function">(<span class="params">x, y, rect</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> cx = (x - rect.left) / scaleRatio;</span><br><span class="line">  <span class="keyword">let</span> cy = (y - rect.top) / scaleRatio;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    x: cx,</span><br><span class="line">    y: cy</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其实就是 <code>(所选的屏幕位置 - 元素的屏幕位置) / 缩放比例</code>，并不困难。rect 可以直接使用 <code>getBoundingClientRect</code> 函数获得。（之前误以为 <code>getBoundingClientRect</code> 获取的位置不正确，自己实现了一下<img src="https://user-gold-cdn.xitu.io/2019/1/31/168a309fac43cb8c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img">。思路是利用父定位元素累加 offset，<strong>喜欢挑战的朋友务必自己尝试一下</strong>，有意外惊喜哦）</p>
+<p>至于“所选的屏幕位置“，取双指中点的位置。这里选取 clientX 和 clientY 值计算，即距离浏览器的偏移量。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 记录变换基点</span></span><br><span class="line"><span class="keyword">let</span> scaleOrigin = &#123;&#125;;</span><br><span class="line">img.addEventListener(<span class="string">'touchmove'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touches = e.touches;</span><br><span class="line">  <span class="keyword">if</span> (touches.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> one = touches[<span class="string">'0'</span>];</span><br><span class="line">    <span class="keyword">let</span> two = touches[<span class="string">'1'</span>];</span><br><span class="line">    <span class="keyword">const</span> distance = <span class="function">(<span class="params">x1, y1, x2, y2</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> a = x1 - x2;</span><br><span class="line">      <span class="keyword">let</span> b = y1 - y2;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Math</span>.sqrt(a * a + b * b);</span><br><span class="line">    &#125;;</span><br><span class="line">    scaleRatio = distance(one.clientX, one.clientY, two.clientX, two.clientY) / distance(...preTouchesClientx1y1x2y2) * scaleRatio || <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 移动基点</span></span><br><span class="line">    <span class="keyword">let</span> origin = relativeCoordinate((one.clientX + two.clientX) / <span class="number">2</span>, (one.clientY + two.clientY) / <span class="number">2</span>, img.getBoundingClientRect());</span><br><span class="line">    scaleOrigin = origin;</span><br><span class="line">    setStyle(<span class="string">'transform-origin'</span>, <span class="string">`<span class="subst">$&#123;origin.x&#125;</span>px <span class="subst">$&#123;origin.y&#125;</span>px`</span>);</span><br><span class="line">      </span><br><span class="line">    <span class="keyword">let</span> matrix = <span class="string">`matrix(<span class="subst">$&#123;scaleRatio&#125;</span>, 0, 0, <span class="subst">$&#123;scaleRatio&#125;</span>, <span class="subst">$&#123;translateX&#125;</span>, <span class="subst">$&#123;translateY&#125;</span>)`</span>;</span><br><span class="line">    setStyle(<span class="string">'transform'</span>, matrix);</span><br><span class="line">    preTouchesClientx1y1x2y2 = [one.clientX, one.clientY, two.clientX, two.clientY];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>似乎完成了？上手试一下。emmm……多操作一下就能发现，每次缩放离手后再次进行缩放，目标对象完全不受控制，甚至会瞬移。</p>
+<h3 id="修改-transform-origin-带来的问题"><a href="#修改-transform-origin-带来的问题" class="headerlink" title="修改 transform-origin 带来的问题"></a>修改 transform-origin 带来的问题</h3><p>稍微思考，我们就能发现问题所在（不存在的，我 debug 好久）：对于已经应用过缩放（或旋转）的元素，修改 origin 位置时，会产生位置的突然变化。</p>
+<p>具体是怎么回事呢？其实这是一个高中数学就能够解释的问题。</p>
+<h4 id="一点高中数学"><a href="#一点高中数学" class="headerlink" title="一点高中数学"></a>一点高中数学</h4><p><img src="http://qiniu1.letow.top/snipaste%202019.01.31-12.19.jpg" alt="元素基点位于原点"></p>
+<p>以上是元素基点位于原点的情况。此时缩放倍率为 2，缩放前的点 A 坐标为 (3, 2)，变换后 A’ 为 (6, 4)。</p>
+<p>那么，如果 origin 不在原点呢？将 origin 移动到 (1, 1) 时，情况如下：</p>
+<p><img src="http://qiniu1.letow.top/snipaste%202019.01.31-16.20.jpg" alt="元素基点位于 1, 1"></p>
+<p>可以看到，A’ 点的坐标变为了 $(5, 3)$。其实现在从数值上已经可以看出一点端倪了，但是让我们来做一点抽象归纳。</p>
+<p>首先，将基点 O 设为 $O = (o_x, o_y)$。此时如果点 A 坐标为 $(x, y)$ ，缩放倍率为 <strong>s</strong>。用向量来表示点 A 到基点的距离就是：</p>
+<p>$$<br>\overrightarrow{OA}=(x-o_x,y-o_y)<br>$$</p>
+<p>那么此时点 A’ 到基点的距离正是 $\overrightarrow{OA}$ 的 <strong>s</strong> 倍：</p>
+<p>$$<br>\overrightarrow{OA’}=(s\cdot(x-o_x),s\cdot(y-o_y))<br>$$</p>
+<p>点 A’ 的坐标即 $\overrightarrow{OA’}$ 的值加上点 O 的坐标：</p>
+<p>$$<br>A’=(s\cdot(x-o_x)+o_x,s\cdot(y-o_y)+o_y)<br>$$</p>
+<p>如果我们移动基点 O，现在点 O 的坐标变为了：$O=(o_x’,o_y’)$。我们并没有改变坐标系参考点，点 A 的坐标仍是 $(x, y)$，此时点 A 到基点 O 的距离为：</p>
+<p>$$<br>\overrightarrow{OA}=(x-o_x’,y-o_y’)<br>$$</p>
+<p>而新由点 A 变换得到的点 A’’ 到基点 O 的距离 $\overrightarrow{OA}$ 的 <strong>s</strong> 倍）就变成了：</p>
+<p>$$<br>\overrightarrow{OA’’}=(s\cdot(x-o_x’),s\cdot(y-o_y’))<br>$$</p>
+<p>此时点 A’’ 的坐标是 $\overrightarrow{OA’’}$ 加上点 O 的坐标：</p>
+<p>$$<br>A’’=(s\cdot(x-o_x’)+o_x’,s\cdot(y-o_y’)+o_y’)<br>$$</p>
+<p>也就是说，将基点 O 从 $(o_x, o_y)$，记增量为 $(\Delta{o_x},\Delta{o_y})$，导致了点 A 的变换结果，从 $(s\cdot(x-o_x)+o_x,s\cdot(y-o_y)+o_y)$ ，变成了$(s\cdot(x-o_x’)+o_x’,s\cdot(y-o_y’)+o_y’)$ 。计算 A 点缩放后的图像因为元素基点移动而变化了的值，也就是点 A’’ 到点 A’ 的距离：</p>
+<p><br>$$<br>\begin{equation} \begin{aligned} \overrightarrow{A’A’’}&amp;=(s\cdot(x-o_x’)+o_x’,s\cdot(y-o_y’)+o_y’)-(s\cdot(x-o_x)+o_x,s\cdot(y-o_y)+o_y)\\&amp;=(s\cdot(o_x-o_x’)+o_x’-o_x,s\cdot(o_y-o_y’)+o_y’-o_y)\\&amp;=((1-s)\cdot\Delta{o_x},(1-s)\cdot\Delta{o_y}) \end{aligned} \end{equation}<br>$$<br></p>
+
+<p>可以带入上面图片中的真实坐标值进行验证，结果是符合预期的。</p>
+<h3 id="消除修改-origin-位置带来的影响"><a href="#消除修改-origin-位置带来的影响" class="headerlink" title="消除修改 origin 位置带来的影响"></a>消除修改 origin 位置带来的影响</h3><p>这样就解释得通了，在<strong>双指落下的一瞬间，origin 坐标变化了 $(\Delta{o_x},\Delta{o_y})$，而取任变换结果上的一点 X ，变化了 $((1-s)\cdot\Delta{o_x},(1-s)\cdot\Delta{o_y})$</strong>。观察发现，这个值与点 X 自身的坐标没有任何关系，是 origin 移动距离决定的一个“定值”；也就是说，元素上的所有的点，同时产生了这端位移的变换效果。反映到界面上来，就是双指接触元素的瞬间，元素立刻“瞬移”一下。而随着手指不断改变位置，origin 不断被重设，于是造成了缩放元素完全不受控制的局面。</p>
+<p>要消除修改 origin 带来的负面影响，有 2 点需要做：</p>
+<ul>
+<li>修改 origin 的同时修改位移，使得目标点的位移效果被抵消</li>
+<li>减少 origin 的修改次数，可以减少不必要的计算量</li>
+</ul>
+<h4 id="进行修正"><a href="#进行修正" class="headerlink" title="进行修正"></a>进行修正</h4><p>之前的计算中，我们得到了元素发生了 $((1-s)\cdot\Delta{o_x},(1-s)\cdot\Delta{o_y})$ 的平移，于是只需要在修改 origin 位置的同时，将位移量提前减去这个值即可。另外，我们将 origin 的修改频率从每个 touchmove 事件进行一次，减少到“完整的一次缩放交互”进行一次。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 增加 originHaveSet 全局变量，每次设置 origin 位置后设为 true</span></span><br><span class="line">img.addEventListener(<span class="string">'touchmove'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">if</span> (!originHaveSet) &#123;</span><br><span class="line">    originHaveSet = <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// 移动视线中心</span></span><br><span class="line">    <span class="keyword">let</span> origin = relativeCoordinate((one.clientX + two.clientX) / <span class="number">2</span>, (one.clientY + two.clientY) / <span class="number">2</span>, </span><br><span class="line">  img.getBoundingClientRect());</span><br><span class="line">    <span class="comment">// 修正视野变化带来的平移量，别忘了加上之前已有的位移值啊！</span></span><br><span class="line">    translateX = (scaleRatio - <span class="number">1</span>) * (origin.x - scaleOrigin.x) + translateX;</span><br><span class="line">    translateY = (scaleRatio - <span class="number">1</span>) * (origin.y - scaleOrigin.y) + translateY;</span><br><span class="line">    setStyle(<span class="string">'transform-origin'</span>, <span class="string">`<span class="subst">$&#123;origin.x&#125;</span>px <span class="subst">$&#123;origin.y&#125;</span>px`</span>);</span><br><span class="line">    scaleOrigin = origin;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;);</span><br><span class="line">img.addEventListener(<span class="string">'touchstart'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touches = e.touches;</span><br><span class="line">  <span class="keyword">if</span> (touches.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// ... 开始缩放事件时，将标志置为 false</span></span><br><span class="line">    originHaveSet = <span class="literal">false</span>;</span><br><span class="line">  &#125; <span class="comment">//...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这时再看一下效果，不禁流下了感动的泪水。终于能够正常缩放了，这完美的跟手效果，这顺滑的缩放体验……</p>
+<p>稍等，缩放后拿开手指，为什么图片有时候还是会跳动啊。</p>
+<h3 id="一点尾巴"><a href="#一点尾巴" class="headerlink" title="一点尾巴"></a>一点尾巴</h3><p>仔细检查一下代码，定位发现是单手 touchmove 的问题：双手缩放后移开，有时会触发单手的一个 touchmove 逻辑；而之前拖拽实现时用到的上一次接触点位置并没有及时更新，导致了计算出的图片移动距离与实际不符。</p>
+<p>那么在 touchend 与 touchcancel 中加入一个更新逻辑即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">img.addEventListener(<span class="string">'touchend'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> touches = e.touches;</span><br><span class="line">  <span class="keyword">if</span> (touches.length === <span class="number">1</span>) &#123;</span><br><span class="line">    recordPreTouchPosition(touches[<span class="string">'0'</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// touchcancel 同样</span></span><br></pre></td></tr></table></figure>
+<p>完整的代码可以在我的 github 上获得：<a href="https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2FWangLeto%2Fhtml-drag-scale-demo%2Fblob%2Fmaster%2Findex.html" target="_blank" rel="noopener">html-drag-scale-demo</a>。</p>
+<p><strong>更新</strong></p>
+<p>如果遇到浏览器因为手势缩放、滚动的问题，参考如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">img.addEventListener(<span class="string">'touchmove'</span>, e =&gt; &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  e.preventDefault();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查是否支持 options 写法</span></span><br><span class="line"><span class="keyword">let</span> passiveSupport = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> option = <span class="built_in">Object</span>.defineProperty(&#123;&#125;, <span class="string">'passive'</span>, &#123;</span><br><span class="line">    get: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      passiveSupport = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="built_in">window</span>.addEventListener(<span class="string">'passivetest'</span>, <span class="literal">null</span>, option);</span><br><span class="line">&#125; <span class="keyword">catch</span> (err) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.addEventListener(<span class="string">'touchmove'</span>, (e) =&gt; &#123;</span><br><span class="line">  e.preventDefault();</span><br><span class="line">&#125;, passiveSupport ? &#123; <span class="attr">passive</span>: <span class="literal">false</span> &#125; : <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+<p>如果对于 passive 的写法感到奇怪，请移步此文：<a href="https://juejin.im/post/5ad804c1f265da504547fe68" target="_blank" rel="noopener">关于passive event listener的一次踩坑</a>；以及 addEventListener 的官方文档：<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener" target="_blank" rel="noopener">EventTarget.addEventListener()</a>。</p>
+<p>另外突然发现自己把文章名称写错了，应该是 <code>scale</code> 而不是 <code>scroll</code>……从 url 可以看出来。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/30/python-http-server/" rel="prev" title="python3 快速启动 http 服务器">
+      <i class="fa fa-chevron-left"></i> python3 快速启动 http 服务器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/06/small-tricks/" rel="next" title="Small Tricks">
+      Small Tricks <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-transform"><span class="nav-number">1.</span> <span class="nav-text">CSS transform</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Touch-事件"><span class="nav-number">2.</span> <span class="nav-text">Touch 事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需要了解"><span class="nav-number">2.1.</span> <span class="nav-text">需要了解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拖拽的实现"><span class="nav-number">3.</span> <span class="nav-text">拖拽的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缩放的实现"><span class="nav-number">4.</span> <span class="nav-text">缩放的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初步实现"><span class="nav-number">4.1.</span> <span class="nav-text">初步实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transform-origin"><span class="nav-number">4.2.</span> <span class="nav-text">transform-origin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取触摸的-offset"><span class="nav-number">4.3.</span> <span class="nav-text">获取触摸的 offset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改-transform-origin-带来的问题"><span class="nav-number">4.4.</span> <span class="nav-text">修改 transform-origin 带来的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一点高中数学"><span class="nav-number">4.4.1.</span> <span class="nav-text">一点高中数学</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消除修改-origin-位置带来的影响"><span class="nav-number">4.5.</span> <span class="nav-text">消除修改 origin 位置带来的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进行修正"><span class="nav-number">4.5.1.</span> <span class="nav-text">进行修正</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一点尾巴"><span class="nav-number">4.6.</span> <span class="nav-text">一点尾巴</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leto" src="http://qiniu1.letow.top/avatar.jpg">
+  <p class="site-author-name" itemprop="name">leto</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WangLeto" title="GitHub → https://github.com/WangLeto" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 → https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="juejin fa-fw"></i>掘金</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+      appKey     : '0WPBlnil4NegnJaSrAVPSPqK',
+      placeholder: "说点什么",
+      avatar     : 'hide',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

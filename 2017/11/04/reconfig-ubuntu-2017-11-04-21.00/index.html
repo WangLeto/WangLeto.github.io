@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png">
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"letow.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false,"b2t":false,"scrollpercent":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原来在机械硬盘上安装了 ubuntu 16.04 版本，后来感觉不过瘾就又在固态硬盘上又安装了一个。配置得差不多了以后，就考虑着把机械硬盘上的系统删除掉。强行体验了一下 sudo rm -rf / 是什么感觉。事实证明，这是一个非常愚蠢的决定：  机械硬盘上的 ubuntu 系统没有被删除干净，这也是意料之中的事情，毕竟没人能举起自己 然而真正让我感到意外的是，被我确认过没有挂载的固态硬盘上的 u">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu 系统配置（16.04）">
+<meta property="og:url" content="http://letow.top/2017/11/04/reconfig-ubuntu-2017-11-04-21.00/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="原来在机械硬盘上安装了 ubuntu 16.04 版本，后来感觉不过瘾就又在固态硬盘上又安装了一个。配置得差不多了以后，就考虑着把机械硬盘上的系统删除掉。强行体验了一下 sudo rm -rf / 是什么感觉。事实证明，这是一个非常愚蠢的决定：  机械硬盘上的 ubuntu 系统没有被删除干净，这也是意料之中的事情，毕竟没人能举起自己 然而真正让我感到意外的是，被我确认过没有挂载的固态硬盘上的 u">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/sublime-sample-2017-11-04-20.17.jpg">
+<meta property="og:image" content="http://qiniu1.letow.top/typora-sample-2017-11-04-20.09.jpg">
+<meta property="og:image" content="http://qiniu1.letow.top/indicator-2017-11-04-20.18.jpg">
+<meta property="og:image" content="http://qiniu1.letow.top/gimp-2017-11-04-20.51.jpg">
+<meta property="og:updated_time" content="2021-08-29T11:26:14.845Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ubuntu 系统配置（16.04）">
+<meta name="twitter:description" content="原来在机械硬盘上安装了 ubuntu 16.04 版本，后来感觉不过瘾就又在固态硬盘上又安装了一个。配置得差不多了以后，就考虑着把机械硬盘上的系统删除掉。强行体验了一下 sudo rm -rf / 是什么感觉。事实证明，这是一个非常愚蠢的决定：  机械硬盘上的 ubuntu 系统没有被删除干净，这也是意料之中的事情，毕竟没人能举起自己 然而真正让我感到意外的是，被我确认过没有挂载的固态硬盘上的 u">
+<meta name="twitter:image" content="http://qiniu1.letow.top/sublime-sample-2017-11-04-20.17.jpg">
+
+<link rel="canonical" href="http://letow.top/2017/11/04/reconfig-ubuntu-2017-11-04-21.00/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ubuntu 系统配置（16.04） | Leto的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Leto的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2017/11/04/reconfig-ubuntu-2017-11-04-21.00/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ubuntu 系统配置（16.04）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-04 20:53:36" itemprop="dateCreated datePublished" datetime="2017-11-04T20:53:36+08:00">2017-11-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-29 19:26:14" itemprop="dateModified" datetime="2021-08-29T19:26:14+08:00">2021-08-29</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/11/04/reconfig-ubuntu-2017-11-04-21.00/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/11/04/reconfig-ubuntu-2017-11-04-21.00/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原来在机械硬盘上安装了 ubuntu 16.04 版本，后来感觉不过瘾就又在固态硬盘上又安装了一个。配置得差不多了以后，就考虑着把机械硬盘上的系统删除掉。强行体验了一下 <code>sudo rm -rf /</code> 是什么感觉。<br>事实证明，这是一个非常愚蠢的决定：</p>
+<ul>
+<li>机械硬盘上的 ubuntu 系统没有被删除干净，这也是意料之中的事情，毕竟没人能举起自己</li>
+<li>然而真正让我感到意外的是，被我确认过没有挂载的固态硬盘上的 ubuntu，居然被删除得一干二净<br>怀着悲愤的心情，我认为不应该浪费了又一次配置系统的机会，于是在固态硬盘重新安装好系统后，我决定记录下这次配置系统的过程。纪念也好，记录也罢，我们开始吧。</li>
+</ul>
+<a id="more"></a>
+<h2 id="更新系统"><a href="#更新系统" class="headerlink" title="更新系统"></a>更新系统</h2><p>按理说这里应该潇洒地打出 <code>sudo apt-get update</code> 等配套命令，但是考虑到国内堪忧的 ubuntu 软件源速度，即使是在实验室的千兆 ipv6 网络环境下我也不愿轻易尝试，于是我们先:</p>
+<h3 id="换源"><a href="#换源" class="headerlink" title="换源"></a>换源</h3><p>搜索 ubuntu 16.04 对应的国内源，通常选取阿里云。注意一点：ubuntu 16.04 的发行代号是 xenial ，网上流传的部分教程是错误的，而这将引起非常不愉快的体验。</p>
+<ol>
+<li><p>备份系统默认的源</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更换</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/apt/source.list</span><br></pre></td></tr></table></figure>
+<p>在编辑器中将内容改为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">deb-src http://archive.ubuntu.com/ubuntu xenial main restricted #Added by software-properties</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted multiverse universe #Added by software-properties</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted multiverse universe #Added by software-properties</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial universe</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates universe</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse #Added by software-properties</span><br><span class="line">deb http://archive.canonical.com/ubuntu xenial partner</span><br><span class="line">deb-src http://archive.canonical.com/ubuntu xenial partner</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted multiverse universe #Added by software-properties</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security universe</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security multiverse</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新软件列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+<p>接下来执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<p>进行系统更新。</p>
+<p>如果过程中出现了“有几个软件包无法下载，要不运行 apt-get update 或者加上 –fix-missing 的选项再试试？”的提示，只需按照提示执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update --fix-missing</span><br></pre></td></tr></table></figure>
+<p>然后再次执行 upgrade 命令即可。</p>
+</li>
+</ol>
+<h2 id="常用工具类软件"><a href="#常用工具类软件" class="headerlink" title="常用工具类软件"></a>常用工具类软件</h2><p>为了省心省力，我们需要一些实用行软件。</p>
+<h3 id="搜狗输入法"><a href="#搜狗输入法" class="headerlink" title="搜狗输入法"></a>搜狗输入法</h3><p>这基本是 linux 必装应用，中文输入全靠它。<br>浏览器搜索“搜狗输入法 linux”，进入官网下载 64 位版本安装包（如果是 32 位电脑当然下载 32 位的安装包）。<br>下载完成后可以尝试直接打开文件，使用 ubuntu软件 这个系统自带的软件商店安装，但是我亲身尝试经常失败，于是找到下载的安装包，使用命令行进行安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_xx.xx.xxx_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>不巧的是，再次出现报错：“处理软件包 sogoupinyin (–install)时出错： 依赖关系问题 - 仍未被配置”，巴拉巴拉一串，其实只是依赖没有安装而已，执行命令安装依赖：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -f</span><br></pre></td></tr></table></figure>
+<p>完成后再次执行 dpkg 命令即可完成安装。重启系统，就可以在输入法切换中找到搜狗输入法。关于词库下载、更换皮肤等，不再赘述。</p>
+<p><strong>PS：</strong> 这次安装搜狗输入法意外发现 linux 版本与 Windows 版本的设置项几乎一致了。要知道 Linux 下的搜狗输入法以前是不支持登录账号的，没想到现在可以无缝衔接了，好幸福啊！</p>
+<h3 id="chrome"><a href="#chrome" class="headerlink" title="chrome"></a>chrome</h3><p>先安装搜狗输入法而不是 chrome 只是因为给这份文档码字使用默认的输入法过于难受，我可是 chrome 的忠实拥趸～<br>直接搜索 chrome，进入官网，下载 64 位 deb 安装包，发现 Ubuntu软件 在重启后已经可以正常安装软件了。<br>然而，想要真正享受到 chrome 跨平台、跨设备的方便，必须有一点点科学上网的手段。</p>
+<h4 id="修改-hosts"><a href="#修改-hosts" class="headerlink" title="修改 hosts"></a>修改 hosts</h4><p>因为在实验室，有 ipv6 网络很是方便，直接在 github 的一个 ipv6 host 项目中下载 host 更换即可，这是 <a href="https://raw.githubusercontent.com/lennylxx/ipv6-hosts/master/hosts" target="_blank" rel="noopener">链接</a>。<br>下载得到的如果是 txt 文件，需要把扩展名去掉，只保留“hosts”即可。</p>
+<p>替换系统的 hosts：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp ./hosts /etc/</span><br></pre></td></tr></table></figure>
+<p>浏览器尝试，成功登录 Google！<br>然而，如果此时执行含有 <code>sudo</code> 的命令，会发现终端报错：“sudo: 无法解析主机：***”。这是因为 hosts 中找不到本机域名对应的 ip 地址引起的，只需在 hosts 中添加一行记录即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>写入 <code>127.0.0.1  你的电脑名</code> 即可（这里“你的电脑名”即报错提示的无法解析主机的名称，这是你在安装 Ubuntu 时位你的电脑所起的名称）。<br>保存后在终端再次尝试含有 <code>sudo</code> 的命令，发现报错消失了。<br>搞定后不要忘了登录 chrome 哦。</p>
+<h3 id="vim，git"><a href="#vim，git" class="headerlink" title="vim，git"></a>vim，git</h3><p>这两款软件绝对是装机必备啊</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git vim</span><br></pre></td></tr></table></figure>
+<h3 id="sublime-text-3"><a href="#sublime-text-3" class="headerlink" title="sublime text 3"></a>sublime text 3</h3><p>sublime text 是一款享誉盛名的文本编辑器，开发者实在不应该错过。<br>不过最近 sublime 的官网似乎墙掉了？可能下面的方法无法正确安装……</p>
+<h4 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h4><ol>
+<li><p>添加 ppa 仓库：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:webupd8team/sublime-text-3</span><br></pre></td></tr></table></figure>
+<p>过程中按下回车进行确认。</p>
+</li>
+<li><p>更新软件列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载安装 sublime text 3</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install sublime-text-installer</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h4><p>参考这篇教程：<a href="http://www.linuxidc.com/Linux/2017-01/139237.htm" target="_blank" rel="noopener">Ubuntu 16.04下Sublime Text 3 的安装和中文配置</a> 。<br>借助下面 xx-net 的帮助，可以访问 sublime 的官网了，但是按照官方教程无法正常完成，因此直接使用打包好的二进制程序。</p>
+<p><img src="http://qiniu1.letow.top/sublime-sample-2017-11-04-20.17.jpg" alt=""></p>
+<ol>
+<li><p>下载压缩包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://download.sublimetext.com/sublime_text_3_build_3143_x64.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>该 URL 中含有的版本号是在官网下载链接中给出的，应该是当前最新的。当然，如果你能够直接通过浏览器下载该文件，就不需要使用 <code>wget</code> 命令了。<br>然而终端报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">错误: 无法验证 download.sublimetext.com 的由 “CN=GoAgent XX-Net,OU=GoAgent Root,O=GoAgent,L=Cernet,ST=Internet,C=CN” 颁发的证书: 无法本地校验颁发者的权限。要以不安全的方式连接至 download.sublimetext.com，使用“--no-check-certificate”。</span><br></pre></td></tr></table></figure>
+<p>那么我们按照提示执行就好了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --no-check-certificate https://download.sublimetext.com/sublime_text_3_build_3143_x64.tar.bz2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压并使用<br>完成下载后，执行解压指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xvf sublime_text_3_build_3143_x64.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>程序被解压到 sublime_text_3 文件夹中。进入后执行 <code>./sublime_text</code> 即可使用。</p>
+</li>
+</ol>
+<h3 id="typora"><a href="#typora" class="headerlink" title="typora"></a>typora</h3><p>程序员喜欢用什么写文档？当然是 markdown 啦！<br>强行安利一波 typora，虽然不开源，但是非常好用/免费/功能强大/颜值高/效率高……</p>
+<p><img src="http://qiniu1.letow.top/typora-sample-2017-11-04-20.09.jpg" alt=""></p>
+<p>这是 <a href="https://typora.io/" target="_blank" rel="noopener">typora 官网</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> optional, but recommended</span></span><br><span class="line">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE</span><br><span class="line"><span class="meta">#</span><span class="bash"> add Typora<span class="string">'s repository</span></span></span><br><span class="line">sudo add-apt-repository 'deb http://typora.io linux/'</span><br><span class="line">sudo apt-get update</span><br><span class="line"><span class="meta">#</span><span class="bash"> install typora</span></span><br><span class="line">sudo apt-get install typora</span><br></pre></td></tr></table></figure>
+<p><code>update</code>失败了？请往下看——</p>
+<h3 id="xx-net（或其他-sock-5-工具）"><a href="#xx-net（或其他-sock-5-工具）" class="headerlink" title="xx-net（或其他 sock 5 工具）"></a>xx-net（或其他 sock 5 工具）</h3><p>说实话，安装 typora 和 sublime 的时候都遭遇到了很大的挫折，不得已向 <a href="https://github.com/XX-net/XX-Net" target="_blank" rel="noopener">xx-net</a> 求助。<br>因为已经轻车熟路了，过程在我这里简化了很多，建议初学者画点精力来研究一下 xx-net 的用法，真的很实用。</p>
+<p>linux 上很多关键功能需要在终端上完成，即使网页浏览器可以正常访问外网，但是如果终端无法使用也很可惜。</p>
+<p><a href="https://askubuntu.com/questions/257290/configure-proxy-for-apt" target="_blank" rel="noopener">Configure proxy for APT?</a></p>
+<h4 id="为-apt-工具配置使用代理"><a href="#为-apt-工具配置使用代理" class="headerlink" title="为 apt 工具配置使用代理"></a>为 apt 工具配置使用代理</h4><ol>
+<li><p>如果没有 /etc/apt/apt.conf 文件，则新建</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/apt/apt.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>写入 xx-net 端口，进行流量代理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Acquire::http::Proxy "http://127.0.0.1:8087";</span><br></pre></td></tr></table></figure>
+<p>当然，如果你<strong>使用蓝灯、ss等其他 sock 5 代理工具</strong>，这里就应该改成它们<strong>各自对应的端口</strong>。</p>
+<p>现在再次尝试 <code>sudo apt-get update</code> 命令，发现出现了大量报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">W: 仓库 “https://typora.io linux/ Release” 没有 Release 文件。</span><br><span class="line">N: 无法认证来自该源的数据，所以使用它会带来潜在风险。</span><br><span class="line">N: 参见 apt-secure(8) 手册以了解仓库创建和用户配置方面的细节。</span><br><span class="line">W: 仓库 “https://typora.io ./linux/ Release” 没有 Release 文件。</span><br><span class="line">N: 无法认证来自该源的数据，所以使用它会带来潜在风险。</span><br><span class="line">N: 参见 apt-secure(8) 手册以了解仓库创建和用户配置方面的细节。</span><br><span class="line">E: 无法下载 https://typora.io/linux/Packages  server certificate verification failed. CAfile: /etc/ssl/certs/ca-certificates.crt CRLfile: none</span><br><span class="line">E: 无法下载 https://typora.io/./linux/Packages  server certificate verification failed. CAfile: /etc/ssl/certs/ca-certificates.crt CRLfile: none</span><br></pre></td></tr></table></figure>
+<p>查找资料得知是由于 apt 工具的安全设置引起的：</p>
+<p><a href="https://askubuntu.com/questions/277793/getting-server-certificate-verification-failed-during-apt-get-update" target="_blank" rel="noopener">Getting “server certificate verification failed” during apt-get update</a></p>
+</li>
+<li><p>添加例外站点</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Acquire::https::typora.io::Verify-Peer "false";</span><br></pre></td></tr></table></figure>
+<p>在 /etc/apt/apt.conf 中补充上面这句话，将 typora 的站点的 ssl 验证忽略。</p>
+</li>
+<li><p>重新尝试，发现可以正常安装了</p>
+</li>
+</ol>
+<h3 id="indicator-sysmonitor"><a href="#indicator-sysmonitor" class="headerlink" title="indicator-sysmonitor"></a>indicator-sysmonitor</h3><p>这是一款可以显示在状态栏的系统监控程序，精致实用，适用于喜欢掌控自己设备状况的人。</p>
+<p><img src="http://qiniu1.letow.top/indicator-2017-11-04-20.18.jpg" alt=""></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:fossfreedom/indicator-sysmonitor</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt install indicator-sysmonitor</span><br></pre></td></tr></table></figure>
+<p>然后在系统搜索中搜索 “ind” 就可以找到并启动，注意设置-general 中可以设置位随系统启动。</p>
+<h3 id="unity-tweak-tool-与-Flatbulous"><a href="#unity-tweak-tool-与-Flatbulous" class="headerlink" title="unity-tweak-tool 与 Flatbulous"></a>unity-tweak-tool 与 Flatbulous</h3><p>unity tweak tool 是 Ubuntu 上一款很流行的美化软件，用于 unity 桌面环境。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install unity-tweak-tool</span><br></pre></td></tr></table></figure>
+<p>flatbulous 是一款扁平化主题，主要作用是美化菜单和应用图标等。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:noobslab/themes</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flatabulous-theme</span><br></pre></td></tr></table></figure>
+<p>配套图标下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:noobslab/icons</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install ultra-flat-icons</span><br></pre></td></tr></table></figure>
+<p>在 unity tweak tool 更换主题和图标即可。</p>
+<h3 id="GIMP-图片编辑器"><a href="#GIMP-图片编辑器" class="headerlink" title="GIMP 图片编辑器"></a>GIMP 图片编辑器</h3><p>这是在 Ubuntu软件 中下载的，用于编辑一些图片。事实证明，linux 上的这类多媒体编辑软件可能确实天生比 Windows 或 mac 平台有劣势。这款软件虽然不是专业版的 GIMP，但是功能也不算少，可是易用性比起 Photoshop 确实差了不少。也或许是我刚刚接触的原因吧。</p>
+<p><img src="http://qiniu1.letow.top/gimp-2017-11-04-20.51.jpg" alt=""></p>
+<p>就先到这里吧，好饿啊。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/04/lonely-2017-11-04-12.31/" rel="prev" title="林语堂谈孤独">
+      <i class="fa fa-chevron-left"></i> 林语堂谈孤独
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/05/ubuntu-开启-ipv6/" rel="next" title="ubuntu 使用 ipv6 隧道">
+      ubuntu 使用 ipv6 隧道 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#更新系统"><span class="nav-number">1.</span> <span class="nav-text">更新系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#换源"><span class="nav-number">1.1.</span> <span class="nav-text">换源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用工具类软件"><span class="nav-number">2.</span> <span class="nav-text">常用工具类软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#搜狗输入法"><span class="nav-number">2.1.</span> <span class="nav-text">搜狗输入法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chrome"><span class="nav-number">2.2.</span> <span class="nav-text">chrome</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#修改-hosts"><span class="nav-number">2.2.1.</span> <span class="nav-text">修改 hosts</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vim，git"><span class="nav-number">2.3.</span> <span class="nav-text">vim，git</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sublime-text-3"><span class="nav-number">2.4.</span> <span class="nav-text">sublime text 3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一"><span class="nav-number">2.4.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法二"><span class="nav-number">2.4.2.</span> <span class="nav-text">方法二</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#typora"><span class="nav-number">2.5.</span> <span class="nav-text">typora</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xx-net（或其他-sock-5-工具）"><span class="nav-number">2.6.</span> <span class="nav-text">xx-net（或其他 sock 5 工具）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为-apt-工具配置使用代理"><span class="nav-number">2.6.1.</span> <span class="nav-text">为 apt 工具配置使用代理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#indicator-sysmonitor"><span class="nav-number">2.7.</span> <span class="nav-text">indicator-sysmonitor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unity-tweak-tool-与-Flatbulous"><span class="nav-number">2.8.</span> <span class="nav-text">unity-tweak-tool 与 Flatbulous</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GIMP-图片编辑器"><span class="nav-number">2.9.</span> <span class="nav-text">GIMP 图片编辑器</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leto" src="http://qiniu1.letow.top/avatar.jpg">
+  <p class="site-author-name" itemprop="name">leto</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WangLeto" title="GitHub → https://github.com/WangLeto" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 → https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="juejin fa-fw"></i>掘金</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+      appKey     : '0WPBlnil4NegnJaSrAVPSPqK',
+      placeholder: "说点什么",
+      avatar     : 'hide',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

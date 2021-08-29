@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png">
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"letow.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false,"b2t":false,"scrollpercent":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="有时候收获了很多不常用的“骚操作”，因为很少用到，所以会忘；用到时又是一顿好找。那么干脆在这里记录一下，省得总忘。 目录：  chrome 选择超链接文字 chrome 删除 url 建议 chrome 跨设备同步标签页 chrome 跨设备同步打开的标签页 chrome 快速定位到地址栏 Windows 上与 Linux 等效的命令 快速固定窗口到最前显示 微信等内嵌浏览器网页调试 wifi a">
+<meta name="keywords" content="其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Small Tricks">
+<meta property="og:url" content="http://letow.top/2019/02/06/small-tricks/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="有时候收获了很多不常用的“骚操作”，因为很少用到，所以会忘；用到时又是一顿好找。那么干脆在这里记录一下，省得总忘。 目录：  chrome 选择超链接文字 chrome 删除 url 建议 chrome 跨设备同步标签页 chrome 跨设备同步打开的标签页 chrome 快速定位到地址栏 Windows 上与 Linux 等效的命令 快速固定窗口到最前显示 微信等内嵌浏览器网页调试 wifi a">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-08-29T11:26:14.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Small Tricks">
+<meta name="twitter:description" content="有时候收获了很多不常用的“骚操作”，因为很少用到，所以会忘；用到时又是一顿好找。那么干脆在这里记录一下，省得总忘。 目录：  chrome 选择超链接文字 chrome 删除 url 建议 chrome 跨设备同步标签页 chrome 跨设备同步打开的标签页 chrome 快速定位到地址栏 Windows 上与 Linux 等效的命令 快速固定窗口到最前显示 微信等内嵌浏览器网页调试 wifi a">
+
+<link rel="canonical" href="http://letow.top/2019/02/06/small-tricks/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Small Tricks | Leto的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Leto的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2019/02/06/small-tricks/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Small Tricks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-06 14:52:09" itemprop="dateCreated datePublished" datetime="2019-02-06T14:52:09+08:00">2019-02-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-29 19:26:14" itemprop="dateModified" datetime="2021-08-29T19:26:14+08:00">2021-08-29</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/02/06/small-tricks/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/02/06/small-tricks/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>有时候收获了很多不常用的“骚操作”，因为很少用到，所以会忘；用到时又是一顿好找。那么干脆在这里记录一下，省得总忘。</p>
+<p>目录：</p>
+<ul>
+<li>chrome 选择超链接文字</li>
+<li>chrome 删除 url 建议</li>
+<li>chrome 跨设备同步标签页</li>
+<li>chrome 跨设备同步打开的标签页</li>
+<li>chrome 快速定位到地址栏</li>
+<li>Windows 上与 Linux 等效的命令</li>
+<li>快速固定窗口到最前显示</li>
+<li>微信等内嵌浏览器网页调试</li>
+<li>wifi adb 调试</li>
+<li>Intel 核显右键集成菜单删除与找回</li>
+<li>谁唤醒了我的电脑</li>
+<li>移除删除不掉的语言包</li>
+</ul>
+<a id="more"></a>
+<h2 id="chrome-选择超链接文字"><a href="#chrome-选择超链接文字" class="headerlink" title="chrome 选择超链接文字"></a>chrome 选择超链接文字</h2><p>按住 <code>ALT</code> 键。</p>
+<h2 id="chrome-删除-url-建议"><a href="#chrome-删除-url-建议" class="headerlink" title="chrome 删除 url 建议"></a>chrome 删除 url 建议</h2><p>chrome 自动记录 url 并适时补全，但是有时候网站地址变了，不希望输入同一个关键字继续出现旧的 url，这个技巧就有用了。</p>
+<ul>
+<li>输入关键字</li>
+<li>方向键找到过时的 url</li>
+<li><code>shift + delete</code> 删除之（mac 上是 fn + shift + delete）</li>
+</ul>
+<p>因为相关的 url 可能会很多，所以要多来几次才能删除干净。</p>
+<h2 id="chrome-跨设备同步标签页"><a href="#chrome-跨设备同步标签页" class="headerlink" title="chrome 跨设备同步标签页"></a>chrome 跨设备同步标签页</h2><p>科学上网、Google 框架是必须的，然后就可以在电脑上查看用手机打开了的标签页。</p>
+<p>历史记录侧边栏：从其他设备打开的标签页。</p>
+<p>实际上需要一点时间同步，没那么快。</p>
+<h2 id="chrome-跨设备同步打开的标签页"><a href="#chrome-跨设备同步打开的标签页" class="headerlink" title="chrome 跨设备同步打开的标签页"></a>chrome 跨设备同步打开的标签页</h2><p>谷歌框架、账号登陆、自动同步是前提条件。所以这里只是介绍入口。</p>
+<p><strong>PC 查看手机端打开的标签页</strong></p>
+<p>历史记录左侧 - 从其他设备打开的标签页。</p>
+<p><strong>手机查看 PC 端打开的标签页</strong></p>
+<p>菜单 - 最近打开的标签页。</p>
+<h2 id="chrome-快速定位到地址栏"><a href="#chrome-快速定位到地址栏" class="headerlink" title="chrome 快速定位到地址栏"></a>chrome 快速定位到地址栏</h2><p>某个版本之前我一直用的是 <code>F6</code>，按一下直接定位到地址栏。但是后来发现 <code>F6</code> 会先定位到标签页。</p>
+<p>后来查了一下，发现 <code>Alt + D</code> 也有同样的功能。（<code>Ctrl + L</code> 感觉有点麻烦，一直不用）</p>
+<h2 id="Windows-上与-Linux-等效的命令"><a href="#Windows-上与-Linux-等效的命令" class="headerlink" title="Windows 上与 Linux 等效的命令"></a>Windows 上与 Linux 等效的命令</h2><table>
+<thead>
+<tr>
+<th>linux</th>
+<th>windows</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cat</td>
+<td>type</td>
+<td>打印文件内容</td>
+</tr>
+<tr>
+<td>whereis</td>
+<td>where</td>
+<td>搜索二进制文件等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="快速固定窗口到最前显示"><a href="#快速固定窗口到最前显示" class="headerlink" title="快速固定窗口到最前显示"></a>快速固定窗口到最前显示</h2><p>原来 <code>nircmd</code> 还有这功能，这玩意真的啥都能干啊。那我还要 DeskPins 作甚？</p>
+<p>管理员身份运行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nircmd win settopmost title <span class="string">"Sticky Notes"</span> <span class="number">1</span>   <span class="comment">#应该是用窗口名称查找进程</span></span><br></pre></td></tr></table></figure>
+<h2 id="微信等内嵌浏览器网页调试"><a href="#微信等内嵌浏览器网页调试" class="headerlink" title="微信等内嵌浏览器网页调试"></a>微信等内嵌浏览器网页调试</h2><p>来源：<a href="https://juejin.im/post/5b558be7e51d4519984139e6#comment" target="_blank" rel="noopener">使用Chrome开发者工具调试Android端内网页(微信，QQ，UC，App内嵌页等)</a>。</p>
+<p>以 X5 内核为例，关键是手机访问这个网址：<a href="debugx5.qq.com">debugx5.qq.com</a>。</p>
+<h2 id="wifi-adb-调试"><a href="#wifi-adb-调试" class="headerlink" title="wifi adb 调试"></a>wifi adb 调试</h2><p>USB 的充电功率低的不行，使用远程调试保持不掉电算你走运，想要充电呢基本不能。那就通过 wifi 直接局域网调试吧。当然先得插上 USB，除非 root 过：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br><span class="line">adb tcpip <span class="number">3456</span></span><br><span class="line">adb connect host-ip:<span class="number">3456</span></span><br></pre></td></tr></table></figure>
+<p>拔掉 USB 就可以（充电）了。</p>
+<h2 id="Intel-核显右键集成菜单删除与找回"><a href="#Intel-核显右键集成菜单删除与找回" class="headerlink" title="Intel 核显右键集成菜单删除与找回"></a>Intel 核显右键集成菜单删除与找回</h2><p>多少年了也没有变化，该说英特尔是守旧呢还是兼容呢（喵喵喵？）</p>
+<p>管理员权限运行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除右键集成</span></span><br><span class="line">regsvr32 /u igfxdtcm.dll</span><br><span class="line"></span><br><span class="line"><span class="comment"># 找回右键集成菜单</span></span><br><span class="line">regsvr32 igfxdtcm.dll</span><br></pre></td></tr></table></figure>
+<h2 id="谁唤醒了我的电脑"><a href="#谁唤醒了我的电脑" class="headerlink" title="谁唤醒了我的电脑"></a>谁唤醒了我的电脑</h2><p>查看上一次唤醒原因：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powercfg –lastwake</span><br></pre></td></tr></table></figure>
+<p>查看可以唤醒电脑的设备：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powercfg /devicequery wake_armed</span><br></pre></td></tr></table></figure>
+<p>禁用某个列出的设备（管理员权限）：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powercfg /devicedisablewake <span class="string">"设备名"</span></span><br></pre></td></tr></table></figure>
+<p>注意，有时候鼠标会注册两个设备，一个 mouse ，一个 keyboard，需要同时禁用两个…</p>
+<p>或者：在系统日志里搜索“Power-Troubleshooter”。</p>
+<p>如果唤醒源是unknown的话，有可能是计划任务。查找可以唤醒电脑的计划任务然后处理：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-ScheduledTask | where &#123;<span class="variable">$_</span>.settings.waketorun&#125;</span><br></pre></td></tr></table></figure>
+<p>来源：<a href="https://www.zhihu.com/question/48154015/answer/162508741" target="_blank" rel="noopener">如何禁止鼠标唤醒Win10？ - Kenny的回答 - 知乎</a>。</p>
+<h2 id="移除删除不掉的语言包"><a href="#移除删除不掉的语言包" class="headerlink" title="移除删除不掉的语言包"></a>移除删除不掉的语言包</h2><p>来源：<a href="https://www.thewindowsclub.com/cannot-remove-language-windows-10" target="_blank" rel="noopener">Fix: Cannot remove a Language from Windows 10</a></p>
+<p>使用 powershell，首先查看安装的语言包信息：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-WinUserLanguageList</span><br></pre></td></tr></table></figure>
+<p>输出类似于：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LanguageTag     : zh-Hans-CN</span><br><span class="line">Autonym         : 中文(中华人民共和国)</span><br><span class="line">EnglishName     : Chinese</span><br><span class="line">balabala....</span><br></pre></td></tr></table></figure>
+<p>记下目标语言包的 LanguageTag，然后运行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$LangList</span> = Get-WinUserLanguageList</span><br><span class="line"><span class="variable">$MarkedLang</span> = <span class="variable">$LangList</span> | where LanguageTag <span class="nomarkup">-eq</span> <span class="string">"所要删除的语言包 tag"</span></span><br><span class="line"><span class="variable">$LangList</span>.Remove(<span class="variable">$MarkedLang</span>)</span><br><span class="line">Set-WinUserLanguageList <span class="variable">$LangList</span> -Force</span><br></pre></td></tr></table></figure>
+<p>好了。</p>
+<p><em>to be continue…</em></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/其他/" rel="tag"># 其他</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/01/js-touch-drag-and-scroll/" rel="prev" title="一步步实现网页图片的手势拖拽与缩放">
+      <i class="fa fa-chevron-left"></i> 一步步实现网页图片的手势拖拽与缩放
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/13/js-wrap-object/" rel="next" title="JavaScript 包装对象">
+      JavaScript 包装对象 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chrome-选择超链接文字"><span class="nav-number">1.</span> <span class="nav-text">chrome 选择超链接文字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chrome-删除-url-建议"><span class="nav-number">2.</span> <span class="nav-text">chrome 删除 url 建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chrome-跨设备同步标签页"><span class="nav-number">3.</span> <span class="nav-text">chrome 跨设备同步标签页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chrome-跨设备同步打开的标签页"><span class="nav-number">4.</span> <span class="nav-text">chrome 跨设备同步打开的标签页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chrome-快速定位到地址栏"><span class="nav-number">5.</span> <span class="nav-text">chrome 快速定位到地址栏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-上与-Linux-等效的命令"><span class="nav-number">6.</span> <span class="nav-text">Windows 上与 Linux 等效的命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速固定窗口到最前显示"><span class="nav-number">7.</span> <span class="nav-text">快速固定窗口到最前显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微信等内嵌浏览器网页调试"><span class="nav-number">8.</span> <span class="nav-text">微信等内嵌浏览器网页调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wifi-adb-调试"><span class="nav-number">9.</span> <span class="nav-text">wifi adb 调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Intel-核显右键集成菜单删除与找回"><span class="nav-number">10.</span> <span class="nav-text">Intel 核显右键集成菜单删除与找回</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#谁唤醒了我的电脑"><span class="nav-number">11.</span> <span class="nav-text">谁唤醒了我的电脑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#移除删除不掉的语言包"><span class="nav-number">12.</span> <span class="nav-text">移除删除不掉的语言包</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leto" src="http://qiniu1.letow.top/avatar.jpg">
+  <p class="site-author-name" itemprop="name">leto</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WangLeto" title="GitHub → https://github.com/WangLeto" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 → https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="juejin fa-fw"></i>掘金</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+      appKey     : '0WPBlnil4NegnJaSrAVPSPqK',
+      placeholder: "说点什么",
+      avatar     : 'hide',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

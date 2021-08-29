@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.8.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://qiniu1.letow.top/blog-favicon-250png.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://qiniu1.letow.top/blog-favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://qiniu1.letow.top/blog-favicon-48.png">
+  <link rel="mask-icon" href="http://qiniu1.letow.top/blog-favicon-250png.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"letow.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false,"b2t":false,"scrollpercent":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Polyline EditorUsing a mouse and keyboard to do polyline editing.  A house in the process of being drawn. The user has just clicked at the position drawn, and a line has been drawn from the previous p">
+<meta name="keywords" content="openGL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openGL 实现绘制、修改多边形">
+<meta property="og:url" content="http://letow.top/2017/11/04/openGL-2017-11-04-4.13/index.html">
+<meta property="og:site_name" content="Leto的博客">
+<meta property="og:description" content="Polyline EditorUsing a mouse and keyboard to do polyline editing.  A house in the process of being drawn. The user has just clicked at the position drawn, and a line has been drawn from the previous p">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://qiniu1.letow.top/blog-glut-lab2-2017-11-4-4.05.gif">
+<meta property="og:updated_time" content="2021-08-29T11:26:14.843Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openGL 实现绘制、修改多边形">
+<meta name="twitter:description" content="Polyline EditorUsing a mouse and keyboard to do polyline editing.  A house in the process of being drawn. The user has just clicked at the position drawn, and a line has been drawn from the previous p">
+<meta name="twitter:image" content="http://qiniu1.letow.top/blog-glut-lab2-2017-11-4-4.05.gif">
+
+<link rel="canonical" href="http://letow.top/2017/11/04/openGL-2017-11-04-4.13/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>openGL 实现绘制、修改多边形 | Leto的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Leto的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://letow.top/2017/11/04/openGL-2017-11-04-4.13/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://qiniu1.letow.top/avatar.jpg">
+      <meta itemprop="name" content="leto">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leto的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          openGL 实现绘制、修改多边形
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-04 04:12:30" itemprop="dateCreated datePublished" datetime="2017-11-04T04:12:30+08:00">2017-11-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-29 19:26:14" itemprop="dateModified" datetime="2021-08-29T19:26:14+08:00">2021-08-29</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/11/04/openGL-2017-11-04-4.13/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/11/04/openGL-2017-11-04-4.13/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Polyline-Editor"><a href="#Polyline-Editor" class="headerlink" title="Polyline Editor"></a>Polyline Editor</h1><p>Using a mouse and keyboard to do polyline editing.</p>
+<ul>
+<li>A house in the process of being drawn. The user has just clicked at the position drawn, and a line has been drawn from the previous point to the one   by the mouse.</li>
+<li>Moving a point. The user positions the cursor near the vertex of some polyline, presses down the mouse button, and “drags” the chosen point to some other location before releasing the button. Upon release of the button, the previous lines connected to this point are erased, and new lines are drawn to it.</li>
+<li>A point is deleted from a polyline. The user clicks near the vertex of some polyline, and the two line segments connected to that vertex are erased. Then the two other endpoints of the segments just erased are connected with a line segment.</li>
+</ul>
+<p><img src="http://qiniu1.letow.top/blog-glut-lab2-2017-11-4-4.05.gif" alt=""></p>
+<a id="more"></a>
+<p>The functionality of the program should include the following “actions”:</p>
+<ul>
+<li>Begin  (‘b’)  (create a new polyline)</li>
+<li>Delete  (‘d’)  (delete the next point pointed to)</li>
+<li>Move  (‘m’)  (drag the point pointed to to a new location)</li>
+<li>Refresh  (‘r’)  (erase the screen and redraw all the polylines)</li>
+<li>Quit   (‘q’)   (exit from the program)</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ConsoleApplication1-openGL-lab1.cpp : 定义控制台应用程序的入口点。</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stdafx.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">point</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line">    <span class="comment">// 一个多边形的起始点</span></span><br><span class="line">    <span class="keyword">bool</span> polygonStart;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;point&gt; points;</span><br><span class="line"><span class="keyword">bool</span> newPolygon = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">bool</span> deleteMode = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">bool</span> moveMode = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 用于标记正在拖动</span></span><br><span class="line"><span class="keyword">bool</span> dragging = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 被拖动的点的编号</span></span><br><span class="line"><span class="keyword">int</span> draggedNum = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RenderSence</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 将窗口颜色的设置显示出来</span></span><br><span class="line">    glClear(GL_COLOR_BUFFER_BIT);</span><br><span class="line">    <span class="comment">// 内容显示颜色</span></span><br><span class="line">    glColor3f(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; points.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (points[i].polygonStart) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i != <span class="number">0</span>) &#123;</span><br><span class="line">                glEnd();</span><br><span class="line">            &#125;</span><br><span class="line">            glBegin(GL_LINE_STRIP);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 注意y值的改变</span></span><br><span class="line">        glVertex2f(points[i].x, <span class="number">600</span> - points[i].y);</span><br><span class="line">    &#125;</span><br><span class="line">    glEnd();</span><br><span class="line">    glutSwapBuffers();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// -1 when no points</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findNearPointNum</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (points.size() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> near = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">double</span> mix = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; points.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">double</span> distence = (points[i].x - x)*(points[i].x - x) + (points[i].y - y)*(points[i].y - y);</span><br><span class="line">        <span class="keyword">if</span> (mix == <span class="number">-1</span>) &#123;</span><br><span class="line">            mix = distence;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (mix &gt; distence) &#123;</span><br><span class="line">            mix = distence;</span><br><span class="line">            near = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> near;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">processMouse</span><span class="params">(<span class="keyword">int</span> button, <span class="keyword">int</span> state, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (button == GLUT_LEFT_BUTTON&amp;&amp;state == GLUT_DOWN) &#123;</span><br><span class="line">        <span class="keyword">if</span> (deleteMode) &#123;</span><br><span class="line">            <span class="keyword">int</span> near = findNearPointNum(x, y);</span><br><span class="line">            <span class="keyword">if</span> (near == <span class="number">-1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (points[near].polygonStart) &#123;</span><br><span class="line">                <span class="keyword">if</span> (points.size() &gt; near + <span class="number">1</span>) &#123;</span><br><span class="line">                    points[near + <span class="number">1</span>].polygonStart = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            points.erase(points.begin() + near, points.begin() + near + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (moveMode) &#123;</span><br><span class="line">            dragging = <span class="literal">true</span>;</span><br><span class="line">            draggedNum = findNearPointNum(x, y);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        point t&#123; x,y,<span class="literal">false</span> &#125;;</span><br><span class="line">        <span class="keyword">if</span> (newPolygon) &#123;</span><br><span class="line">            newPolygon = <span class="literal">false</span>;</span><br><span class="line">            t.polygonStart = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        points.push_back(t);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (button == GLUT_LEFT_BUTTON&amp;&amp;state == GLUT_UP) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!dragging) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        dragging = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (draggedNum != <span class="number">-1</span>) &#123;</span><br><span class="line">            points[draggedNum].x = x;</span><br><span class="line">            points[draggedNum].y = y;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">processKey</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> key, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="string">'b'</span>) &#123;</span><br><span class="line">        newPolygon = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="string">'d'</span>) &#123;</span><br><span class="line">        deleteMode = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="string">'m'</span>) &#123;</span><br><span class="line">        moveMode = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="string">'r'</span>) &#123;</span><br><span class="line">        points.clear();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="string">'q'</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    glutInit(&amp;argc, argv);</span><br><span class="line"></span><br><span class="line">    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);</span><br><span class="line"></span><br><span class="line">    glutInitWindowSize(<span class="number">1000</span>, <span class="number">600</span>);</span><br><span class="line">    glutInitWindowPosition(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">    glutCreateWindow(<span class="string">"Hello GLUT"</span>);</span><br><span class="line"></span><br><span class="line">    glutDisplayFunc(RenderSence);</span><br><span class="line">    glutIdleFunc(RenderSence);</span><br><span class="line"></span><br><span class="line">    gluOrtho2D(<span class="number">0</span>, <span class="number">1000</span>, <span class="number">0</span>, <span class="number">600</span>);</span><br><span class="line"></span><br><span class="line">    glutMouseFunc(processMouse);</span><br><span class="line">    glutKeyboardFunc(processKey);</span><br><span class="line"></span><br><span class="line">    glutMainLoop();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/openGL/" rel="tag"># openGL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/04/lonely-2017-11-04-12.31/" rel="next" title="林语堂谈孤独">
+      林语堂谈孤独 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Polyline-Editor"><span class="nav-number">1.</span> <span class="nav-text">Polyline Editor</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leto" src="http://qiniu1.letow.top/avatar.jpg">
+  <p class="site-author-name" itemprop="name">leto</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/WangLeto" title="GitHub → https://github.com/WangLeto" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://juejin.im/user/5a8a698cf265da4e896ad8ca" title="掘金 → https://juejin.im/user/5a8a698cf265da4e896ad8ca" rel="noopener" target="_blank"><i class="juejin fa-fw"></i>掘金</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://lllovol.com" title="http://lllovol.com" rel="noopener" target="_blank">某女装大佬</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn" rel="noopener" target="_blank">津ICP备17008544号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leto</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'clQL1DEsR3bFuRqUL22GdvLU-gzGzoHsz',
+      appKey     : '0WPBlnil4NegnJaSrAVPSPqK',
+      placeholder: "说点什么",
+      avatar     : 'hide',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
